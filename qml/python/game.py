@@ -36,23 +36,16 @@ class Game(object):
         x_space = 2
         y_space = 2
 
-        if self.min_y > y_space:
-            self.min_y -= y_space
-
-        if self.min_x > x_space:
-            self.min_x -= x_space
-
-        if self.max_y < 19 - y_space:
-            self.max_y += y_space
-
-        if self.max_x < 19 - x_space:
-            self.max_x += x_space
+        self.min_y = max(1, self.min_y - y_space)
+        self.min_x = max(1, self.min_x - x_space)
+        self.max_y = min(19, self.max_y + y_space)
+        self.max_x = min(19, self.max_x + x_space)
 
         self.side = {
-            "TOP": self.min_y != 0,
-            "LEFT": self.min_x != 0,
-            "RIGHT": self.max_x != 19,
-            "BOTTOM": self.max_y != 19,
+            "TOP": self.min_y == 1,
+            "LEFT": self.min_x == 1,
+            "RIGHT": self.max_x == 19,
+            "BOTTOM": self.max_y == 19,
         }
 
 
@@ -110,8 +103,6 @@ class Game(object):
         """ This takes coordinates in SGF style (aa - qq) and returns the
         corresponding integer coordinates (between 1 and 19). """
 
-        print(x)
-
         return tuple([ord(c) - 96 for c in x])
 
     def parse_tree(self, fun, elements=None):
@@ -136,7 +127,7 @@ class Game(object):
         """ Create a normalized board, translated on lower coord.
         """
 
-        for transformation in [Translation(self), Rotation(self), Translation(self), Symmetry(self)]:
+        for transformation in [Translation(self), Rotation(self), Symmetry(self)]:
             if not transformation.is_valid():
                 continue
 

@@ -72,10 +72,10 @@ class Rotation(object):
         """ Apply the transformations on the sides.
         """
         return {
-            "TOP":   self.board.side["RIGHT"],
-            "LEFT":  self.board.side["TOP"],
-            "RIGHT": self.board.side["BOTTOM"],
-            "BOTTOM":self.board.side["LEFT"]
+            "BOTTOM":   self.board.side["RIGHT"],
+            "RIGHT":  self.board.side["TOP"],
+            "LEFT": self.board.side["BOTTOM"],
+            "TOP":self.board.side["LEFT"]
         }
 
 class Symmetry(object):

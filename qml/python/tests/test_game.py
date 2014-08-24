@@ -66,36 +66,10 @@ class TestBoard(unittest.TestCase):
         # There is only 2 state : initial board, and 2 possibilities.
         self.assertEqual(2, len(currentgame.tree))
 
-        self.assertTrue(currentgame.side['TOP'])
-        self.assertTrue(currentgame.side['LEFT'])
-        self.assertFalse(currentgame.side['BOTTOM'])
-        self.assertFalse(currentgame.side['RIGHT'])
+        self.assertFalse(currentgame.side['TOP'])
+        self.assertFalse(currentgame.side['LEFT'])
+        self.assertTrue(currentgame.side['BOTTOM'])
+        self.assertTrue(currentgame.side['RIGHT'])
 
         currentgame.normalize()
 
-    def test_level2(self):
-
-        def fun(pos):
-            return (0,0)
-        currentgame = create_board("test2.sgf")
-
-        print(currentgame.tree)
-
-        currentgame.normalize()
-
-        self.assertEqual(11, currentgame.min_x)
-        self.assertEqual(13, currentgame.min_y)
-        self.assertEqual(19, currentgame.max_x)
-        self.assertEqual(19, currentgame.max_y)
-
-        self.assertEqual((9, 7), currentgame.get_size())
-
-        # There is only 2 state : initial board, and 2 possibilities.
-        self.assertEqual(2, len(currentgame.tree))
-
-        self.assertTrue(currentgame.side['TOP'])
-        self.assertTrue(currentgame.side['LEFT'])
-        self.assertFalse(currentgame.side['BOTTOM'])
-        self.assertFalse(currentgame.side['RIGHT'])
-
-        currentgame.normalize()
