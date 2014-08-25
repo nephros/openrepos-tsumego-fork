@@ -2,7 +2,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 
-
 import io.thp.pyotherside 1.2
 
 
@@ -16,25 +15,25 @@ Page {
 
     Column {
 
-        width:parent.width
-        height: parent.height
+        anchors.fill: parent;
+        spacing: 25
 
-        spacing: 2
-//        Row {
+        Row {
 
-//            height: 60
+            width: parent.width;
 
-//            //anchors.horizontalCenter: parent.horizontalCenter
-//            Repeater {
-//                model: 3
-//                Rectangle {
-//                    width: 100; height: 40
-//                    border.width: 1
-//                    color: "yellow"
-//                }
-//            }
-//        }
+            IconButton {
+               width: parent.width / 2;
+               icon.source: "image://theme/icon-m-back"
+               onClicked: console.log("Previous!")
+            }
 
+            IconButton {
+               width: parent.width / 2;
+               icon.source: "image://theme/icon-m-refresh"
+               onClicked: goban.start()
+            }
+        }
 
         Goban {
             id:goban
@@ -54,10 +53,14 @@ Page {
             delegate: Text {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
+
+                color: Theme.primaryColor
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.fontSizeMedium
+
                 width: view.itemWidth
                 height: view.height
-                    text: "Level " + index
-                    color: "white"
+                    text: "Problem " + index
 
             }
         }

@@ -25,31 +25,30 @@ Item {
      */
     property bool currentPlayer: true;
 
-    function setGoban(ret) {
+    property variant tree;
 
-        limitTop = ret.side.TOP;
-        limitBottom = ret.side.BOTTOM;
-        limitLeft = ret.side.LEFT;
-        limitRight = ret.side.RIGHT;
-
-        goban.columns = ret.size[0]
-        goban.rows = ret.size[1]
+    /*
+     * Start the game.
+     *
+     * Initialize the board with the stones, and set player color.
+     */
+    function start() {
 
         currentPlayer = true;
 
-        var maxWidth = width / ret.size[0]
-        var maxHeight = height / ret.size[1]
-
-        if (maxWidth > maxHeight)  {
-            caseSize = maxHeight;
-        } else {
-            caseSize = maxWidth;
+        for (var i = 0; i < goban.rows * goban.columns; i++) {
+            repeater.itemAt(i).clear();
         }
 
-        /*
-         * Put the initials stones
-         */
-        var initial = ret.tree[0]
+        var initial
+
+        i = 0;
+
+        while (tree[i].AW === undefined && tree[i].AB === undefined) {
+            i++;
+        }
+
+        initial = tree[i]
 
         var aw = initial.AW;
         if (aw !== undefined) {
@@ -65,6 +64,33 @@ Item {
 
             });
         }
+    }
+
+    function setGoban(ret) {
+
+        limitTop = ret.side.TOP;
+        limitBottom = ret.side.BOTTOM;
+        limitLeft = ret.side.LEFT;
+        limitRight = ret.side.RIGHT;
+
+        goban.columns = ret.size[0]
+        goban.rows = ret.size[1]
+
+
+        var maxWidth = width / ret.size[0]
+        var maxHeight = height / ret.size[1]
+
+        if (maxWidth > maxHeight)  {
+            caseSize = maxHeight;
+        } else {
+            caseSize = maxWidth;
+        }
+
+        /*
+         * Put the initials stones
+         */
+        tree = ret.tree;
+        start();
     }
 
     /**
@@ -113,7 +139,7 @@ Item {
 //            return;
 //        }
 
-        point.setColor(currentPlayer);
+        point.put(currentPlayer);
 
         if (neighbors.length !== 0) {
 
@@ -235,16 +261,30 @@ Item {
 
             Item {
 
+                function put(isWhite) {
+                    piece.type = isWhite ? "white" : "black";
+                    piece.state = "shown";
+                }
+
                 function setColor(isWhite) {
-                    piece.type = isWhite ? "white" : "black"
+                    piece.init(isWhite ? "white" : "black");
                 }
 
                 function remove() {
+                    piece.state = "remove"
+                }
+
+                function clear() {
                     piece.type = "";
+                    piece.state = "";
                 }
 
                 function getType() {
-                    return piece.type;
+                    if (piece.state == "remove")  {
+                        return "";
+                    } else {
+                        return piece.type;
+                    }
                 }
 
                 width: caseSize; height: caseSize
