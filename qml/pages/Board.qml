@@ -23,13 +23,20 @@ Page {
             width: parent.width;
 
             IconButton {
-               width: parent.width / 2;
+               width: (parent.width - parent.height) / 2;
                icon.source: "image://theme/icon-m-back"
                onClicked: console.log("Previous!")
             }
 
+            Image {
+               width: parent.height;
+               source: "../content/gfx/" + (goban.currentPlayer ? "white":"black") + ".png"
+               height: parent.height;
+               scale: 0.5
+            }
+
             IconButton {
-               width: parent.width / 2;
+               width: (parent.width - parent.height) / 2;
                icon.source: "image://theme/icon-m-refresh"
                onClicked: goban.start()
             }

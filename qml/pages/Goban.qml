@@ -37,7 +37,7 @@ Item {
         currentPlayer = true;
 
         for (var i = 0; i < goban.rows * goban.columns; i++) {
-            repeater.itemAt(i).clear();
+            repeater.itemAt(i).remove(false);
         }
 
         var initial
@@ -53,14 +53,14 @@ Item {
         var aw = initial.AW;
         if (aw !== undefined) {
             aw.forEach(function (pos) {
-                goban.getItemAt(pos[0], pos[1]).setColor(currentPlayer);
+                goban.getItemAt(pos[0], pos[1]).put(currentPlayer, false);
             });
         }
 
         var ab = initial.AB;
         if (ab !== undefined) {
             ab.forEach(function (pos) {
-                goban.getItemAt(pos[0], pos[1]).setColor(!currentPlayer);
+                goban.getItemAt(pos[0], pos[1]).put(!currentPlayer, false);
 
             });
         }
@@ -98,11 +98,13 @@ Item {
      */
     function clickHandler(index) {
 
+        if ( (!limitLeft && Actions.isFirstCol(index, goban.columns))
+          || (!limitRight && Actions.isLastCol(index, goban.columns))
+          || (!limitTop && Actions.isFirstRow(index, goban.columns))
+          || (!limitBottom && Actions.isLastRow(index, goban.columns, goban.rows)) ) {
 
-        if ( !limitLeft && Actions.isFirstCol(index, goban.columns)
-          || !limitRight && Actions.isLastCol(index, goban.columns)
-          || !limitTop && Actions.isFirstRow(index, goban.rows)
-          || !limitBottom && Actions.isLastRow(index, goban.columns, goban.rows) ) {
+            console.log("click outside", index, goban.rows, Actions.isFirstRow(index, goban.columns));
+
             return;
         }
 
@@ -139,14 +141,14 @@ Item {
 //            return;
 //        }
 
-        point.put(currentPlayer);
+        point.put(currentPlayer, true);
 
         if (neighbors.length !== 0) {
 
             toRemove.forEach(function(neighbor) {
                 Actions.getChainToRemove(neighbor, repeater, goban.columns, goban.rows, isOponnent).
                 forEach(function(x) {
-                    repeater.itemAt(x).remove();
+                    repeater.itemAt(x).remove(true);
                 })
             });
 
@@ -155,7 +157,7 @@ Item {
              */
             Actions.getChainToRemove(index, repeater, goban.columns, goban.rows, isPlayer).
             forEach(function(x) {
-                repeater.itemAt(x).remove();
+                repeater.itemAt(x).remove(true);
             });
 
             /*
@@ -194,20 +196,14 @@ Item {
 
         Rectangle {
 
-            function isOpen(index) {
-                if ( (index === goban.rows - 1 && !limitBottom) || (index === 0 && !limitTop)) {
-                    return "transparent"
-                }
-                return "black"
-            }
-
             x: goban.x + (caseSize / 2)
 
             y: goban.y + (caseSize / 2) + (index * caseSize)
 
             width: goban.width - caseSize;
 
-            color: isOpen(index)
+            color: "black"
+            visible: !(index === goban.rows - 1 && !limitBottom) || (index === 0 && !limitTop)
             height: 1
 
         }
@@ -221,21 +217,17 @@ Item {
 
         Rectangle {
 
-            function isOpen(index) {
-                if ( (index === goban.columns - 1 && !limitRight) || (index === 0 && !limitLeft)) {
-                    return "transparent"
-                }
-                return "black"
-            }
-
             x: goban.x + (caseSize / 2) + (index * caseSize)
 
             y: goban.y + (caseSize / 2)
 
             height: goban.height - caseSize;
 
-            color: isOpen(index)
+            color: "black"
+
             width: 1
+
+            visible: !(index === goban.columns - 1 && !limitRight) || (index === 0 && !limitLeft);
         }
 
 
@@ -259,43 +251,17 @@ Item {
             model: goban.columns * goban.rows
             id : repeater
 
-            Item {
-
-                function put(isWhite) {
-                    piece.type = isWhite ? "white" : "black";
-                    piece.state = "shown";
-                }
-
-                function setColor(isWhite) {
-                    piece.init(isWhite ? "white" : "black");
-                }
-
-                function remove() {
-                    piece.state = "remove"
-                }
-
-                function clear() {
-                    piece.type = "";
-                    piece.state = "";
-                }
-
-                function getType() {
-                    if (piece.state == "remove")  {
-                        return "";
-                    } else {
-                        return piece.type;
-                    }
-                }
-
+            Point{
                 width: caseSize; height: caseSize
+                id : piece
 
-                property bool mark: false
+                MouseArea {
 
-                Point{
-                    id : piece
-                    width: caseSize; height: caseSize
-
+                    id: interactiveArea
+                    anchors.fill: parent
+                    onClicked: clickHandler(index);
                 }
+
             }
         }
     }

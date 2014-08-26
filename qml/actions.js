@@ -17,8 +17,8 @@ function isLastCol(index, cols) {
 /**
  * Check if the case on the grid belongs to the first row
  */
-function isFirstRow(index, rows) {
-    return index < rows;
+function isFirstRow(index, cols) {
+    return index < cols;
 }
 
 /**

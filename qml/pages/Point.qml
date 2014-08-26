@@ -2,21 +2,46 @@ import QtQuick 2.0
 
 Item {
 
-    property string type: "";
-    property alias piece_scale: piece.scale;
+    /**
+     * A mark on the stone for identify it easily.
+     */
+    property bool mark: false
 
-    function getImageForType() {
-        if ("" === type) {
-            return ""
+    /*
+     * Make the stone appear.
+     */
+    function put(isWhite, animation) {
+        if (animation) {
+            state = "shown";
+        } else {
+            piece.opacity = 1;
+            piece.scale = 1;
+            state = "";
         }
-        return "../content/gfx/" + type + ".png"
+        piece.type = isWhite ? "white" : "black";
     }
 
-    function init(initType) {
-        type = initType;
-        piece.opacity = 1;
-        piece.scale = 1;
+    /**
+     * Make the stone disappear.
+     */
+    function remove(animation) {
+        if (animation) {
+            state = "remove"
+        } else {
+            piece.type = "";
+            state = "";
+        }
+    }
 
+    /*
+     * return the current stone type.
+     */
+    function getType() {
+        if (state == "remove")  {
+            return "";
+        } else {
+            return piece.type;
+        }
     }
 
     states: [
@@ -25,7 +50,7 @@ Item {
             PropertyChanges  { target: piece; opacity:1 }
         }, State {
             name: "remove"
-            onCompleted: type = "";
+            onCompleted: piece.type = "";
         }
     ]
 
@@ -52,16 +77,19 @@ Item {
         }
     ]
 
-    MouseArea {
-
-        id: interactiveArea
-        anchors.fill: parent
-        onClicked: clickHandler(index);
-    }
-
     Image {
         id: piece
         anchors.fill: parent
         source: getImageForType();
+
+        property string type: "";
+
+        function getImageForType() {
+            if ("" === type) {
+                return ""
+            }
+            return "../content/gfx/" + type + ".png"
+        }
+
     }
 }
