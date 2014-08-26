@@ -203,7 +203,7 @@ Item {
             width: goban.width - caseSize;
 
             color: "black"
-            visible: !(index === goban.rows - 1 && !limitBottom) || (index === 0 && !limitTop)
+            visible: (!((index === goban.rows - 1 && !limitBottom) || (index === 0 && !limitTop)))
             height: 1
 
         }
@@ -227,7 +227,7 @@ Item {
 
             width: 1
 
-            visible: !(index === goban.columns - 1 && !limitRight) || (index === 0 && !limitLeft);
+            visible: (!((index === goban.columns - 1 && !limitRight) || (index === 0 && !limitLeft)));
         }
 
 
