@@ -15,7 +15,7 @@ Page {
 
     Column {
 
-        id: column
+        id : column
         anchors.fill: parent;
         spacing: 25
 
@@ -45,22 +45,22 @@ Page {
         }
 
         Goban {
-            id: goban;
+            id:goban
             width: parent.width;
             height: column.height - (row.height + view.height);
         }
 
-
         SlideshowView {
             id: view
             width: parent.width
-            height: 100
+            height: 200
             itemWidth: width / 2
             onCurrentIndexChanged: {py.call('board.getGame', [view.currentIndex], goban.setGoban)}
 
-            model: 5
+            model: 1
             delegate: Text {
                 horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
 
                 color: Theme.primaryColor
                 font.family: Theme.fontFamily
@@ -68,7 +68,7 @@ Page {
 
                 width: view.itemWidth
                 height: view.height
-                    text: "Problem " + (index + 1);
+                text: "Problem " + (index + 1);
 
             }
         }
