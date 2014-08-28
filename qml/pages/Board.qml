@@ -15,11 +15,13 @@ Page {
 
     Column {
 
+        id: column
         anchors.fill: parent;
         spacing: 25
 
         Row {
 
+            id: row
             width: parent.width;
 
             IconButton {
@@ -43,9 +45,9 @@ Page {
         }
 
         Goban {
-            id:goban
-            width: parent.width
-            height: 650
+            id: goban;
+            width: parent.width;
+            height: column.height - (row.height + view.height);
         }
 
 
@@ -59,7 +61,6 @@ Page {
             model: 5
             delegate: Text {
                 horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
 
                 color: Theme.primaryColor
                 font.family: Theme.fontFamily
@@ -67,7 +68,7 @@ Page {
 
                 width: view.itemWidth
                 height: view.height
-                    text: "Problem " + index
+                    text: "Problem " + (index + 1);
 
             }
         }

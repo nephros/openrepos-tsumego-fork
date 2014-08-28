@@ -103,8 +103,6 @@ Item {
           || (!limitTop && Actions.isFirstRow(index, goban.columns))
           || (!limitBottom && Actions.isLastRow(index, goban.columns, goban.rows)) ) {
 
-            console.log("click outside", index, goban.rows, Actions.isFirstRow(index, goban.columns));
-
             return;
         }
 
@@ -125,29 +123,27 @@ Item {
             return repeater.itemAt(x).getType() === (currentPlayer ? "black" : "white");
         }
 
-        /*
-         * Check for pieces to remove.
-         */
-        var toRemove = neighbors.filter(isOponnent);
-
-//        function freeOrChain(x) {
-//            var pointType = repeater.itemAt(x).getType();
-//            return pointType === "" || pointType === (currentPlayer ? "white" : "black");
-//        }
-//        /*
-//         * Single suicide is not allowed…
-//         */
-//        if (neighbors.length !== 0 && toRemove.length === 0 && !neighbors.some(freeOrChain)) {
-//            return;
-//        }
-
-        point.put(currentPlayer, true);
+        function freeOrChain(x) {
+            var pointType = repeater.itemAt(x).getType();
+            return pointType === "" || pointType === (currentPlayer ? "white" : "black");
+        }
 
         if (neighbors.length !== 0) {
 
-            toRemove.forEach(function(neighbor) {
-                Actions.getChainToRemove(neighbor, repeater, goban.columns, goban.rows, isOponnent).
-                forEach(function(x) {
+            var somethingToRemove = false;
+
+            point.put(currentPlayer, true);
+
+            /*
+             * Check for pieces to remove.
+             */
+            neighbors.filter(isOponnent).forEach(function(neighbor) {
+
+                var piecesToRemove = Actions.getChainToRemove(neighbor, repeater, goban.columns, goban.rows, isOponnent);
+                if (piecesToRemove.length !== 0) {
+                    somethingToRemove = true;
+                }
+                piecesToRemove.forEach(function(x) {
                     repeater.itemAt(x).remove(true);
                 })
             });
@@ -155,10 +151,17 @@ Item {
             /*
              * Check for suicide.
              */
-            Actions.getChainToRemove(index, repeater, goban.columns, goban.rows, isPlayer).
-            forEach(function(x) {
-                repeater.itemAt(x).remove(true);
-            });
+            if (!somethingToRemove) {
+                var suicides = Actions.getChainToRemove(index, repeater, goban.columns, goban.rows, isPlayer);
+                if (suicides.length !== 0) {
+//                    suicides.forEach(function(x) {
+//                        repeater.itemAt(x).remove(true);
+//                    });
+                    point.remove(false);
+                    currentPlayer = !currentPlayer;
+                }
+
+            }
 
             /*
              * Remove the marks in the cases.
@@ -173,7 +176,6 @@ Item {
             for (var i = 0; i < goban.columns * goban.rows; i++) {
                 repeater.itemAt(i).mark = false;
             }
-
         }
         currentPlayer = !currentPlayer;
 
@@ -203,7 +205,9 @@ Item {
             width: goban.width - caseSize;
 
             color: "black"
+
             visible: (!((index === goban.rows - 1 && !limitBottom) || (index === 0 && !limitTop)))
+
             height: 1
 
         }
