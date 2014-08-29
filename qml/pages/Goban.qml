@@ -1,6 +1,6 @@
 import QtQuick 2.0
 
-import "../actions.js" as Actions
+import "../javascript/goban_util.js" as Actions
 
 Item {
 
@@ -54,6 +54,7 @@ Item {
         if (aw !== undefined) {
             aw.forEach(function (pos) {
                 goban.getItemAt(pos[0], pos[1]).put(currentPlayer, false);
+//                Actions.addPiece(pos[0] + (pos[1] * goban.columns), goban, currentPlayer, false, true, true);
             });
         }
 
@@ -61,7 +62,7 @@ Item {
         if (ab !== undefined) {
             ab.forEach(function (pos) {
                 goban.getItemAt(pos[0], pos[1]).put(!currentPlayer, false);
-
+//                Actions.addPiece(pos[0] + (pos[1] * goban.columns), goban, !currentPlayer, false, true, true);
             });
         }
     }
@@ -106,78 +107,9 @@ Item {
             return;
         }
 
-        var point = repeater.itemAt(index);
-        var elementType = point.getType();
-
-        if (elementType !== "") {
-            return;
+        if (Actions.addPiece(index, goban, currentPlayer, true, false, false)) {
+            currentPlayer = !currentPlayer;
         }
-
-        var neighbors = Actions.getNeighbors(index, goban.columns, goban.rows);
-
-        function isPlayer(x) {
-            return repeater.itemAt(x).getType() === (currentPlayer ? "white" : "black");
-        }
-
-        function isOponnent(x) {
-            return repeater.itemAt(x).getType() === (currentPlayer ? "black" : "white");
-        }
-
-        function freeOrChain(x) {
-            var pointType = repeater.itemAt(x).getType();
-            return pointType === "" || pointType === (currentPlayer ? "white" : "black");
-        }
-
-        if (neighbors.length !== 0) {
-
-            var somethingToRemove = false;
-
-            point.put(currentPlayer, true);
-
-            /*
-             * Check for pieces to remove.
-             */
-            neighbors.filter(isOponnent).forEach(function(neighbor) {
-
-                var piecesToRemove = Actions.getChainToRemove(neighbor, repeater, goban.columns, goban.rows, isOponnent);
-                if (piecesToRemove.length !== 0) {
-                    somethingToRemove = true;
-                }
-                piecesToRemove.forEach(function(x) {
-                    repeater.itemAt(x).remove(true);
-                })
-            });
-
-            /*
-             * Check for suicide.
-             */
-            if (!somethingToRemove) {
-                var suicides = Actions.getChainToRemove(index, repeater, goban.columns, goban.rows, isPlayer);
-                if (suicides.length !== 0) {
-//                    suicides.forEach(function(x) {
-//                        repeater.itemAt(x).remove(true);
-//                    });
-                    point.remove(false);
-                    currentPlayer = !currentPlayer;
-                }
-
-            }
-
-            /*
-             * Remove the marks in the cases.
-             *
-             * The call to getChainToRemove add marks on the cases in order to
-             * prevent infinite looping. We need to clean the cases before any new
-             * click.
-             *
-             * We do not need to remove them before as we are not filtering the
-             * same pieces.
-             */
-            for (var i = 0; i < goban.columns * goban.rows; i++) {
-                repeater.itemAt(i).mark = false;
-            }
-        }
-        currentPlayer = !currentPlayer;
 
     }
 
@@ -233,8 +165,6 @@ Item {
 
             visible: (!((index === goban.columns - 1 && !limitRight) || (index === 0 && !limitLeft)));
         }
-
-
     }
 
     /*
@@ -249,6 +179,10 @@ Item {
 
         function getItemAt(x, y) {
             return repeater.itemAt(x + y * columns)
+        }
+
+        function getElementAtIndex(index) {
+            return repeater.itemAt(index);
         }
 
         Repeater {
