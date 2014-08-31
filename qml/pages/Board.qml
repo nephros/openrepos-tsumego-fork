@@ -4,8 +4,6 @@ import Sailfish.Silica 1.0
 
 import io.thp.pyotherside 1.2
 
-
-
 Page {
 
     width: Screen.width; height: Screen.height;
@@ -27,7 +25,7 @@ Page {
             IconButton {
                width: (parent.width - parent.height) / 2;
                icon.source: "image://theme/icon-m-back"
-               onClicked: console.log("Previous!")
+               onClicked: goban.undo();
             }
 
             Image {

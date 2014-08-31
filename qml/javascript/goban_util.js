@@ -53,6 +53,8 @@ function getNeighbors(index, cols, rows) {
     return neighbors;
 }
 
+
+
 function getChainToRemove(index, grid, filter) {
 
     var piecesToCheck = [];
@@ -112,6 +114,64 @@ function getChainToRemove(index, grid, filter) {
 
 }
 
+/*
+ * Undo a move on the board.
+ */
+function undo(grid, step) {
+
+    /*
+     * Fill the space with the given color.
+     */
+    function fillWith(index, color) {
+
+        /*
+         * filter wich keep only free places.
+         */
+        function freePlaces(x) {
+            return grid.getElementAtIndex(x).getType() === "";
+        }
+
+        var piece = index;
+
+        var space = [];
+
+        while (piece !== undefined) {
+
+            var point = grid.getElementAtIndex(piece);
+
+            if (point.mark || !point.getType === "") {
+                piece = space.pop();
+                continue;
+            }
+            point.mark = true;
+
+            point.put(color, false);
+
+            getNeighbors(piece, grid.columns, grid.rows).filter(freePlaces).forEach(function(x) {
+                space.push(x);
+            });
+            piece = space.pop();
+        }
+    }
+
+    /*
+     * First add each point marked as removed.
+     * Only the first point is recorded, so we fill all the other points
+     */
+
+    if (step.suicide) {
+        fillWith(step.added, step.player);
+    } else {
+        var removed = step.removed;
+        if (removed !== undefined) {
+            fillWith(step.removed, !step.player);
+        }
+        grid.getElementAtIndex(step.added).remove(false);
+    }
+
+    clearMarks(grid);
+}
+
 /**
  * Add a new stone on the goban.
  *
@@ -126,7 +186,7 @@ function getChainToRemove(index, grid, filter) {
  * animation(bool):     should we add animation on the goban
  * allowSuicide(bool):  if suicide an autorized action
  *
- * return true if the movement has been allowed.
+ * return a step object if the movement has been allowed.
  */
 function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOveride) {
 
@@ -134,10 +194,14 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
     var elementType = point.getType();
 
     if (!allowOveride && elementType !== "") {
-        return false;
+        return undefined;
     }
 
     var neighbors = getNeighbors(index, grid.columns, grid.rows);
+
+    var step = {};
+    step.added = index;
+    step.player = currentPlayer;
 
     function isPlayer(x) {
         return grid.getElementAtIndex(x).getType() === (currentPlayer ? "white" : "black");
@@ -155,7 +219,7 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
     point.put(currentPlayer, animation);
 
     if (neighbors.length === 0) {
-        return true;
+        return step;
     }
 
     var somethingToRemove = false;
@@ -164,15 +228,20 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
     /*
      * Check for pieces to remove.
      */
-    neighbors.filter(isOponnent).forEach(function(neighbor) {
+    neighbors.forEach(function(neighbor) {
+
+        if (!isOponnent(neighbor)) {
+            return;
+        }
 
         var piecesToRemove = getChainToRemove(neighbor, grid, isOponnent);
         if (piecesToRemove.length !== 0) {
+            step.removed = piecesToRemove[0];
             somethingToRemove = true;
+            piecesToRemove.forEach(function(x) {
+                grid.getElementAtIndex(x).remove(animation);
+            });
         }
-        piecesToRemove.forEach(function(x) {
-            grid.getElementAtIndex(x).remove(animation);
-        })
     });
 
     /*
@@ -182,6 +251,9 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
         var suicides = getChainToRemove(index, grid, isPlayer);
         if (suicides.length !== 0) {
             if (allowSuicide) {
+
+                step.suicide = true;
+
                 suicides.forEach(function(x) {
                     grid.getElementAtIndex(x).remove(animation);
                 });
@@ -193,20 +265,28 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
 
     }
 
-    /*
-     * Remove the marks in the cases.
-     *
-     * The call to getChainToRemove add marks on the cases in order to
-     * prevent infinite looping. We need to clean the cases before any new
-     * click.
-     *
-     * We do not need to remove them before as we are not filtering the
+    /* We do not need to clear the marks before as we are not filtering the
      * same pieces.
      */
+    clearMarks(grid);
+
+    if (movementAutorized) {
+        return step;
+    } else {
+        return undefined;
+    }
+}
+
+
+/*
+ * Remove the marks in the cases.
+ *
+ * Some functions add marks on each stone in order to prevent infinite looping.
+ * We need to clean the cases before any new action.
+ *
+ */
+function clearMarks(grid) {
     for (var i = 0; i < grid.columns * grid.rows; i++) {
         grid.getElementAtIndex(i).mark = false;
     }
-
-    return movementAutorized;
-
 }

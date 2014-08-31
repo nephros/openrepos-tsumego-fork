@@ -27,6 +27,8 @@ Item {
 
     property variant tree;
 
+    property variant history;
+
     /*
      * Start the game.
      *
@@ -48,13 +50,13 @@ Item {
             i++;
         }
 
-        initial = tree[i]
+        initial = tree[i];
+        history = [];
 
         var aw = initial.AW;
         if (aw !== undefined) {
             aw.forEach(function (pos) {
                 goban.getItemAt(pos[0], pos[1]).put(currentPlayer, false);
-//                Actions.addPiece(pos[0] + (pos[1] * goban.columns), goban, currentPlayer, false, true, true);
             });
         }
 
@@ -62,7 +64,6 @@ Item {
         if (ab !== undefined) {
             ab.forEach(function (pos) {
                 goban.getItemAt(pos[0], pos[1]).put(!currentPlayer, false);
-//                Actions.addPiece(pos[0] + (pos[1] * goban.columns), goban, !currentPlayer, false, true, true);
             });
         }
     }
@@ -94,6 +95,22 @@ Item {
         start();
     }
 
+    /*
+     * Undo the last move.
+     */
+    function undo() {
+        if (history.length === 0) {
+            return;
+        }
+
+        var currentHistory = history;
+        var step = currentHistory.pop();
+        history = currentHistory;
+
+        Actions.undo(goban, step);
+        currentPlayer = step.player;
+    }
+
     /**
      * Handle a click on the goban.
      */
@@ -107,8 +124,14 @@ Item {
             return;
         }
 
-        if (Actions.addPiece(index, goban, currentPlayer, true, false, false)) {
+        var step = Actions.addPiece(index, goban, currentPlayer, true, false, false);
+
+        if (step !== undefined) {
             currentPlayer = !currentPlayer;
+
+            var currentHistory = history;
+            currentHistory.push(step);
+            history = currentHistory;
         }
 
     }
