@@ -162,9 +162,10 @@ function undo(grid, step) {
     if (step.suicide) {
         fillWith(step.added, step.player);
     } else {
-        var removed = step.removed;
-        if (removed !== undefined) {
-            fillWith(step.removed, !step.player);
+        if (step.removed !== undefined) {
+            step.removed.forEach(function(point){
+                fillWith(point, !step.player);
+            });
         }
         grid.getElementAtIndex(step.added).remove(false);
     }
@@ -222,6 +223,7 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
         return step;
     }
 
+    step.removed = [];
     var somethingToRemove = false;
     var movementAutorized = true;
 
@@ -236,7 +238,7 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
 
         var piecesToRemove = getChainToRemove(neighbor, grid, isOponnent);
         if (piecesToRemove.length !== 0) {
-            step.removed = piecesToRemove[0];
+            step.removed.push(neighbor);
             somethingToRemove = true;
             piecesToRemove.forEach(function(x) {
                 grid.getElementAtIndex(x).remove(animation);
