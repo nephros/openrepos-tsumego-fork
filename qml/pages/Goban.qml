@@ -36,7 +36,7 @@ Item {
      */
     function start() {
 
-        currentPlayer = true;
+        //currentPlayer = true;
 
         for (var i = 0; i < goban.rows * goban.columns; i++) {
             repeater.itemAt(i).remove(false);
@@ -87,6 +87,9 @@ Item {
         } else {
             caseSize = maxWidth;
         }
+
+        console.log("Current player:", ret.current_player);
+        currentPlayer = (ret.current_player === 'W');
 
         /*
          * Put the initials stones

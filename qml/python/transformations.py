@@ -18,7 +18,7 @@ class Translation(object):
         """
         return self.board.min_x != 0 or self.board.min_y != 0
 
-    def apply_points(self, coord):
+    def apply_points(self, coord, name = None):
         """ Move the points to the lower position.
         """
         x, y = coord
@@ -56,7 +56,7 @@ class Rotation(object):
             return random.randint(0, 1) == 1
         return should < 0
 
-    def apply_points(self, coord):
+    def apply_points(self, coord, name = None):
         """ Apply the transformation on a point.
         """
         x, y = coord
@@ -93,7 +93,7 @@ class Symmetry(object):
         direction.  """
         return self.x_flip or self.y_flip
 
-    def apply_points(self, coord):
+    def apply_points(self, coord, name = None):
         """ Flip in both directions.
         """
         x, y = coord

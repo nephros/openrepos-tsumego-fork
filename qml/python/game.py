@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import random
 from transformations import *
 
 
@@ -29,6 +28,8 @@ class Game(object):
         self.min_x, self.min_y = 19, 19
         self.max_x, self.max_y = 0, 0
 
+        self.current_player = None
+
         # Get the board size from the whole possibles positions and create the
         # game tree
         self.tree = Game.create_tree(cursor, self.extend_board_size, [])
@@ -41,6 +42,7 @@ class Game(object):
         self.max_y = min(19, self.max_y + y_space)
         self.max_x = min(19, self.max_x + x_space)
 
+
         self.side = {
             "TOP": self.min_y == 1,
             "LEFT": self.min_x == 1,
@@ -49,9 +51,13 @@ class Game(object):
         }
 
 
-    def extend_board_size(self, pos):
+    def extend_board_size(self, pos, action = None):
         """ Extend the board size to include the position given.
         """
+
+        if self.current_player == None and action in ['B', 'W']:
+            self.current_player = action
+
         x, y = Game.conv_coord(pos)
         self.min_x = min(x, self.min_x)
         self.max_x = max(x, self.max_x)
@@ -72,7 +78,7 @@ class Game(object):
         node = cursor.currentNode().copy()
         for key in ['AB', 'AW', 'B', 'W']:
             if key in node:
-                node[key] = [fun(pos) for pos in node[key]]
+                node[key] = [fun(pos, key) for pos in node[key]]
 
         acc.append(node)
         childs = cursor.noChildren()

@@ -54,4 +54,5 @@ def getGame(n):
         "tree": game.tree,
         "size": game.get_size(),
         "side": game.side,
+        "current_player": game.current_player,
     }

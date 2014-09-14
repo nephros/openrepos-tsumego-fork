@@ -35,7 +35,6 @@ import "pages"
 ApplicationWindow
 {
 
-
     initialPage: Component {
 
         id:app

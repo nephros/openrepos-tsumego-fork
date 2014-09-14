@@ -23,7 +23,7 @@ class TestBoard(unittest.TestCase):
 
     def test_createTree(self):
 
-        def fun(pos):
+        def fun(pos, action):
             return pos
 
         with open("python/tests/test.sgf") as f:
@@ -72,4 +72,6 @@ class TestBoard(unittest.TestCase):
         self.assertTrue(currentgame.side['RIGHT'])
 
         currentgame.normalize()
+
+        self.assertEqual('W', currentgame.current_player)
 
