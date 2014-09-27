@@ -133,7 +133,7 @@ class Game(object):
         """ Create a normalized board, translated on lower coord.
         """
 
-        for transformation in [Translation(self), Rotation(self), Symmetry(self)]:
+        for transformation in [Translation(self), Rotation(self), Symmetry(self), ToIndex(self)]:
             if not transformation.is_valid():
                 continue
 

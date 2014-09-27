@@ -64,7 +64,7 @@ function getChainToRemove(index, grid, filter) {
      * filter wich keep only free places.
      */
     function freePlaces(x) {
-        return grid.getElementAtIndex(x).getType() === "";
+        return grid.itemAt(x).getType() === "";
     }
 
     var piece = index;
@@ -72,8 +72,8 @@ function getChainToRemove(index, grid, filter) {
 
         /* if the case has already been marked, do not check it again.
          */
-        if (!grid.getElementAtIndex(piece).mark) {
-            grid.getElementAtIndex(piece).mark = true;
+        if (!grid.itemAt(piece).mark) {
+            grid.itemAt(piece).mark = true;
             piecesToRemove.push(piece);
 
             var neighbors = getNeighbors(piece, grid.columns, grid.rows);
@@ -128,7 +128,7 @@ function undo(grid, step) {
          * filter wich keep only free places.
          */
         function freePlaces(x) {
-            return grid.getElementAtIndex(x).getType() === "";
+            return grid.itemAt(x).getType() === "";
         }
 
         var piece = index;
@@ -137,7 +137,7 @@ function undo(grid, step) {
 
         while (piece !== undefined) {
 
-            var point = grid.getElementAtIndex(piece);
+            var point = grid.itemAt(piece);
 
             if (point.mark || !point.getType === "") {
                 piece = space.pop();
@@ -167,7 +167,7 @@ function undo(grid, step) {
                 fillWith(point, !step.player);
             });
         }
-        grid.getElementAtIndex(step.added).remove(false);
+        grid.itemAt(step.added).remove(false);
     }
 
     clearMarks(grid);
@@ -182,7 +182,7 @@ function undo(grid, step) {
  * grid(object):        the grid where to put the stone:
  *  - grid.rows:        number of rows in the grid
  *  - grid.columns:     number of columes in the grid
- *  - grid.getElementAtIndex(index) should return the stone a the given index
+ *  - grid.itemAt(index) should return the stone a the given index
  * currentPlayer(bool): player color
  * animation(bool):     should we add animation on the goban
  * allowSuicide(bool):  if suicide an autorized action
@@ -191,7 +191,7 @@ function undo(grid, step) {
  */
 function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOveride) {
 
-    var point = grid.getElementAtIndex(index);
+    var point = grid.itemAt(index);
     var elementType = point.getType();
 
     if (!allowOveride && elementType !== "") {
@@ -205,15 +205,15 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
     step.player = currentPlayer;
 
     function isPlayer(x) {
-        return grid.getElementAtIndex(x).getType() === (currentPlayer ? "white" : "black");
+        return grid.itemAt(x).getType() === (currentPlayer ? "white" : "black");
     }
 
     function isOponnent(x) {
-        return grid.getElementAtIndex(x).getType() === (currentPlayer ? "black" : "white");
+        return grid.itemAt(x).getType() === (currentPlayer ? "black" : "white");
     }
 
     function freeOrChain(x) {
-        var pointType = grid.getElementAtIndex(x).getType();
+        var pointType = grid.itemAt(x).getType();
         return pointType === "" || pointType === (currentPlayer ? "white" : "black");
     }
 
@@ -241,7 +241,7 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
             step.removed.push(neighbor);
             somethingToRemove = true;
             piecesToRemove.forEach(function(x) {
-                grid.getElementAtIndex(x).remove(animation);
+                grid.itemAt(x).remove(animation);
             });
         }
     });
@@ -257,7 +257,7 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
                 step.suicide = true;
 
                 suicides.forEach(function(x) {
-                    grid.getElementAtIndex(x).remove(animation);
+                    grid.itemAt(x).remove(animation);
                 });
             } else {
                 point.remove(false);
@@ -289,6 +289,6 @@ function addPiece(index, grid, currentPlayer, animation, allowSuicide, allowOver
  */
 function clearMarks(grid) {
     for (var i = 0; i < grid.columns * grid.rows; i++) {
-        grid.getElementAtIndex(i).mark = false;
+        grid.itemAt(i).mark = false;
     }
 }

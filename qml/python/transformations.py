@@ -123,3 +123,32 @@ class Symmetry(object):
             "RIGHT": self.board.side["LEFT" if self.x_flip else "RIGHT"],
             "BOTTOM":self.board.side["TOP" if self.y_flip else "BOTTOM"]
         }
+
+class ToIndex(object):
+    """" Transform each point position in point index.
+    """
+
+    def __init__(self, board):
+        self.board = board
+
+    def is_valid(self):
+        """ This transformation is always valid.
+        """
+        return True;
+
+    def apply_points(self, coord, name = None):
+        """
+        """
+        x_size = min(19, self.board.max_x - self.board.min_x + 1)
+        x, y = coord
+        return (x - self.board.min_x) + (y - self.board.min_y) * x_size
+
+    def get_new_size(self):
+        """ The size is not changed.
+        """
+        return self.board.min_x, self.board.min_y, self.board.max_x, self.board.max_y
+
+    def get_new_side(self):
+        """ There is no changes on the sides.
+        """
+        return self.board.side

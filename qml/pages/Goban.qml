@@ -1,6 +1,7 @@
 import QtQuick 2.0
 
 import "../javascript/goban_util.js" as Actions
+import "../javascript/navigator.js" as TreeNavigator
 
 Item {
 
@@ -18,6 +19,8 @@ Item {
     property bool limitLeft: true;
     property bool limitRight: true;
 
+    property bool completed: false;
+
     /*
      * The current color to play :
      * - true for white
@@ -25,8 +28,23 @@ Item {
      */
     property bool currentPlayer: true;
 
+    property bool initialPlayer: true;
+
+    property bool freePlay: false;
+
+    /**
+     * The game tree.
+     */
     property variant tree;
 
+    /**
+     * Path in the tree.
+     */
+    property variant path;
+
+    /*
+     * History for cancelling a move.
+     */
     property variant history;
 
     /*
@@ -36,13 +54,14 @@ Item {
      */
     function start() {
 
-        //currentPlayer = true;
+        completed = false;
 
         for (var i = 0; i < goban.rows * goban.columns; i++) {
             repeater.itemAt(i).remove(false);
         }
 
-        var initial
+        var initial;
+        currentPlayer = initialPlayer;
 
         i = 0;
 
@@ -52,18 +71,19 @@ Item {
 
         initial = tree[i];
         history = [];
+        path = [i + 1];
 
         var aw = initial.AW;
         if (aw !== undefined) {
             aw.forEach(function (pos) {
-                goban.getItemAt(pos[0], pos[1]).put(currentPlayer, false);
+                goban.itemAt(pos).put(true, false);
             });
         }
 
         var ab = initial.AB;
         if (ab !== undefined) {
             ab.forEach(function (pos) {
-                goban.getItemAt(pos[0], pos[1]).put(!currentPlayer, false);
+                goban.itemAt(pos).put(false, false);
             });
         }
     }
@@ -88,8 +108,8 @@ Item {
             caseSize = maxWidth;
         }
 
-        console.log("Current player:", ret.current_player);
-        currentPlayer = (ret.current_player === 'W');
+        initialPlayer = (ret.current_player === 'W');
+        console.log(ret.current_player);
 
         /*
          * Put the initials stones
@@ -107,17 +127,27 @@ Item {
         }
 
         var currentHistory = history;
-        var step = currentHistory.pop();
-        history = currentHistory;
 
-        Actions.undo(goban, step);
-        currentPlayer = step.player;
+        var actions = currentHistory.pop();
+        actions.reverse();
+
+        actions.forEach(function (x) {
+            Actions.undo(goban, x);
+            currentPlayer = x.player;
+            path = x.path;
+        });
+
+        history = currentHistory;
     }
 
     /**
      * Handle a click on the goban.
      */
     function clickHandler(index) {
+
+        if (completed) {
+            return;
+        }
 
         if ( (!limitLeft && Actions.isFirstCol(index, goban.columns))
           || (!limitRight && Actions.isLastCol(index, goban.columns))
@@ -130,11 +160,52 @@ Item {
         var step = Actions.addPiece(index, goban, currentPlayer, true, false, false);
 
         if (step !== undefined) {
-            currentPlayer = !currentPlayer;
 
+
+            /*
+             * Update the path.
+             */
+            var currentPosition = path[path.length - 1];
+            step.path = path;
+            var action = TreeNavigator.checkAction(path, tree, currentPlayer, index);
+            path = action;
+
+
+            /*
+             * Update the history with the last move.
+             */
             var currentHistory = history;
-            currentHistory.push(step);
+            var actions = [step];
+
+
+            if (action === undefined) {
+                /*
+                 * Switch to variation mode
+                 */
+            } else {
+                if (TreeNavigator.getCurrentAction(action, tree) === undefined) {
+                    console.log("Level completed!");
+                    completed = true;
+                    return;
+                } else {
+                    /*
+                     * Play the openent move.
+                     */
+
+                    TreeNavigator.play(action, tree, currentPlayer, function(x, newPath) {
+                        console.log(x);
+                        var oponentAction = Actions.addPiece(x, goban, !currentPlayer, true, false, false)
+                        oponentAction.path = path;
+                        path = newPath;
+                        actions.push(oponentAction);
+                    });
+
+                }
+
+            }
+            currentHistory.push(actions);
             history = currentHistory;
+
         }
 
     }
@@ -207,8 +278,8 @@ Item {
             return repeater.itemAt(x + y * columns)
         }
 
-        function getElementAtIndex(index) {
-            return repeater.itemAt(index);
+        function itemAt(pos) {
+            return repeater.itemAt(pos);
         }
 
         Repeater {

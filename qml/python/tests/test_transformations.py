@@ -3,7 +3,7 @@
 
 import unittest
 
-from python.transformations import Rotation, Translation, Symmetry
+from python.transformations import Rotation, Translation, Symmetry, ToIndex
 
 class FakeBoard():
 
@@ -132,3 +132,15 @@ class TestRotation(unittest.TestCase):
         symmetry.y_flip = False
         self.assertFalse(symmetry.is_valid())
 
+
+class TestToIndex(unittest.TestCase):
+    """ Test the toIndex transformation.
+    """
+
+    def test_apply_points(self):
+        """ Test the points index.
+        """
+        toIndex = ToIndex(FakeBoard(2, 1, 8, 5))
+        self.assertEqual(0, toIndex.apply_points((2, 1)))
+        self.assertEqual(7, toIndex.apply_points((2, 2)))
+        self.assertEqual(8, toIndex.apply_points((3, 2)))
