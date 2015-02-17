@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.1">
 <context>
     <name>CoverPage</name>
     <message>
@@ -28,15 +28,28 @@
     </message>
 </context>
 <context>
-    <name>SecondPage</name>
+    <name>collections_list</name>
     <message>
-        <location filename="../qml/pages/SecondPage.qml" line="42"/>
-        <source>Nested Page</source>
+        <location filename="../qml/pages/collections_list.qml" line="14"/>
+        <source>Select the collection to open</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>tsumego</name>
+    <message>
+        <location filename="../qml/tsumego.qml" line="44"/>
+        <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SecondPage.qml" line="49"/>
-        <source>Item</source>
+        <location filename="../qml/tsumego.qml" line="48"/>
+        <source>Load level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/tsumego.qml" line="57"/>
+        <source>Hint</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import os.path
 try:
     import pyotherside
 except:
@@ -22,7 +23,10 @@ def setPath(qtPath):
 def loadBoard(filename):
     global cursor
 
-    sgfPath = os.path.join(path,"../content","sgf",filename);
+    if os.path.isfile(filename):
+        sgfPath = filename
+    else:
+        sgfPath = os.path.join(path,"../content","sgf",filename);
     pyotherside.send('log', sgfPath)
     try:
         f = open(sgfPath)
@@ -48,7 +52,6 @@ def getGame(n):
 
     game = Game(cursor)
     game.normalize()
-    pyotherside.send('log', "Game loaded !!")
 
     return {
         "tree": game.tree,

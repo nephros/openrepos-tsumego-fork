@@ -30,19 +30,41 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import "pages"
+import "pages/"
 
 ApplicationWindow
 {
+    initialPage: Page {
+        SilicaFlickable {
 
-    initialPage: Component {
+            anchors.fill: parent
 
-        id:app
+            PullDownMenu {
+                MenuItem {
+                    text: qsTr("Options")
+                    onClicked: {}
+                }
+                MenuItem {
+                    text: qsTr("Load level")
+                    onClicked: {
+                        var options = pageStack.push(Qt.resolvedUrl("pages/collections_list.qml"));
+                        options.openCollection.connect(function(path) {
+                            board.loadBoard(path);
+                        });
+                    }
+                }
+                MenuItem {
+                    text: qsTr("Hint")
+                    onClicked: {
+                        board.showHint();
+                    }
+                }
+            }
 
+            Board {id:board}
 
-        Board {id:board}
+        }
+
     }
-
-    cover: Qt.resolvedUrl("cover/CoverPage.qml")
-
 }
+

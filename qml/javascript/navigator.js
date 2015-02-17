@@ -24,10 +24,68 @@ function getCurrentAction(path, tree) {
 
 }
 
-function checkAction(path, tree, player, playedPosition) {
+/**
+  * return the next move to play in the tree.
+  */
+function getMove(color, tree) {
+
+    var element;
+
+    if (color) {
+        element = tree.W;
+    } else {
+        element = tree.B;
+    }
+
+    if (element !== undefined) {
+        return element[0];
+    }
+    return undefined;
+
+}
+
+/*
+ * return true if the branch is wrong.
+ */
+function isWrong(branch) {
+    return (["WV", "TR"].some(function (element, index, array){
+        return branch.hasOwnProperty(element);
+    }))
+}
+
+function getNextMove(path, tree, player) {
+
+    if (path === undefined) {
+        return false;
+    }
+
+    var way = getCurrentAction(path, tree);
+     if (Array.isArray(way)) {
+         /* get all the possibilities, except the one which are mark wrong */
+         var filtered = way.filter(function callback(element) {
+             return !isWrong(element[0]);
+         });
+         var newIndex = Math.ceil(Math.random() * filtered.length) - 1;
+         return getMove(player, filtered[newIndex][0]);
+
+     } else {
+         return getMove(player, way);
+     }
+}
+
+/**
+ * Compare the player move with the level tree, and check if the player move is allowed.
+ * return undefined if the move was not in the level, or return the new path.
+ */
+function checkAction(path, tree, player, playedPosition, action) {
+
+    if (path === undefined) {
+        return false;
+    }
 
     var way = getCurrentAction(path, tree);
     var pathIndex;
+    var properties = {};
 
     if (Array.isArray(way)) {
         /*
@@ -43,18 +101,17 @@ function checkAction(path, tree, player, playedPosition) {
             path.push(index);
             var next = getCurrentAction(path, tree)[0];
 
-            console.log( next );
-
-            var expectedIndex;
-            if (player) {
-                expectedIndex = next.W[0];
-                console.log("W", next.W);
-            } else {
-                expectedIndex = next.B[0];
-                console.log("B", next.B);
-            }
+            var expectedIndex = getMove(player, next);
 
             if (playedPosition === expectedIndex) {
+
+                /*
+                 * Check for wrong variation.
+                 */
+                if  (isWrong(next)) {
+                    properties.wrong = true;
+                }
+
                 path.push(0);
                 return true;
             }
@@ -70,62 +127,58 @@ function checkAction(path, tree, player, playedPosition) {
             /*
              * We got the rigth action. Now, get the next position in the path.
              */
-            console.log("Good !!");
             pathIndex = path.length - 1;
             path[pathIndex] = path[pathIndex] + 1;
-            return path;
-        } else {
-            /*
-             * The played position does not match the recorded game.
-             */
-            return undefined;
+            action(path, properties);
+            return true;
         }
-
     } else {
 
         /*
          * We only have one possibility, return it.
          */
-        console.log("Single result", way);
-
-        var move;
-        if (player) {
-            move = way.W[0];
-        } else {
-            move = way.B[0];
-        }
-
+        var move = getMove(player, way);
         if (move === playedPosition) {
-            console.log("Good !!", path);
+            /*
+             * The player played the good move.
+             */
             pathIndex = path.length - 1;
             path[pathIndex] = path[pathIndex] + 1;
-            return path;
-        } else {
-            return undefined;
+            action(path, properties);
+            return true;
         }
     }
+    return false;
 
 }
 
-function play(path, tree, player, addPiece) {
+/**
+ * Play the computer action.
+ * path: the current path
+ * tree: the level
+ * player: the current player
+ * addPiece: function called with the new move and the new path.
+ */
+function playComputer(path, tree, player, addPiece) {
 
     var way = getCurrentAction(path, tree);
-    var pathIndex;
+
+    var newPath;
 
     if (Array.isArray(way)) {
-
+        /* We have differents branches. We take one at random.
+         */
+        var newIndex = Math.ceil(Math.random() * way.length) - 1;
+        newPath = way[newIndex][0]; /* the player move (index 0) */
+        path.push(newIndex, 1); /* return the oponent move (index 1)*/
     } else {
-
-        var move;
-        if (!player) {
-            move = way.W[0];
-        } else {
-            move = way.B[0];
-        }
+        var pathIndex;
         pathIndex = path.length - 1;
         path[pathIndex] = path[pathIndex] + 1;
-        addPiece(move, path);
+        newPath = way;
     }
+    var move = getMove(!player, newPath);
+    addPiece(move, path);
 }
 
 function undo(path) {

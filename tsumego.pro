@@ -18,7 +18,6 @@ SOURCES += src/tsumego.cpp
 
 OTHER_FILES += qml/tsumego.qml \
     qml/cover/CoverPage.qml \
-    qml/pages/FirstPage.qml \
     qml/content/gfx/*.png \
     rpm/tsumego.changes.in \
     rpm/tsumego.spec \
@@ -38,7 +37,13 @@ OTHER_FILES += qml/tsumego.qml \
     qml/python/game.py \
     qml/pages/Goban.qml \
     qml/content/sgf/hard.sgf \
-    qml/content/sgf/easy.sgf
+    qml/content/sgf/easy.sgf \
+    qml/javascript/actions.js \
+    qml/javascript/goban_util.js \
+    qml/javascript/navigator.js \
+    qml/content/gfx/ok.svg \
+    qml/pages/collections_list.qml \
+    qml/python/configuration.py
 
 # to disable building translations every time, comment out the
 # following CONFIG line

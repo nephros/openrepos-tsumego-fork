@@ -32,6 +32,11 @@ Item {
 
     property bool freePlay: false;
 
+    /*
+     * flag to tell if player is on a wrong branch.
+     */
+    property bool isWrong: false;
+
     /**
      * The game tree.
      */
@@ -47,13 +52,16 @@ Item {
      */
     property variant history;
 
+    signal completedLevel(bool status);
+    signal startup();
+
     /*
-     * Start the game.
-     *
-     * Initialize the board with the stones, and set player color.
+     * Start the game. Initialize the board with the stones, and set player color.
+     * Function called at first launch, or whene resetting the game.
      */
     function start() {
 
+        startup();
         completed = false;
 
         for (var i = 0; i < goban.rows * goban.columns; i++) {
@@ -86,6 +94,7 @@ Item {
                 goban.itemAt(pos).put(false, false);
             });
         }
+        isWrong = false;
     }
 
     function setGoban(ret) {
@@ -109,13 +118,22 @@ Item {
         }
 
         initialPlayer = (ret.current_player === 'W');
-        console.log(ret.current_player);
 
         /*
          * Put the initials stones
          */
         tree = ret.tree;
         start();
+    }
+
+    function showHint() {
+
+        if (path === undefined) {
+            console.log("no hint to show");
+            return;
+        }
+        var action = TreeNavigator.getNextMove(path, tree, currentPlayer);
+        clickHandler(action);
     }
 
     /*
@@ -126,6 +144,7 @@ Item {
             return;
         }
 
+        completed = false;
         var currentHistory = history;
 
         var actions = currentHistory.pop();
@@ -135,19 +154,19 @@ Item {
             Actions.undo(goban, x);
             currentPlayer = x.player;
             path = x.path;
+            if (x.wrong !== undefined) {
+                isWrong = false;
+            }
         });
 
         history = currentHistory;
+
     }
 
     /**
      * Handle a click on the goban.
      */
     function clickHandler(index) {
-
-        if (completed) {
-            return;
-        }
 
         if ( (!limitLeft && Actions.isFirstCol(index, goban.columns))
           || (!limitRight && Actions.isLastCol(index, goban.columns))
@@ -158,55 +177,64 @@ Item {
         }
 
         var step = Actions.addPiece(index, goban, currentPlayer, true, false, false);
+        if (step === undefined) {
+            /* Movement not allowed. */
+            return;
+        }
 
-        if (step !== undefined) {
+        if (completed) {
+            completed = false;
+        }
 
+        /*
+         * Update the path.
+         */
+        step.path = path;
 
-            /*
-             * Update the path.
-             */
-            var currentPosition = path[path.length - 1];
-            step.path = path;
-            var action = TreeNavigator.checkAction(path, tree, currentPlayer, index);
-            path = action;
+        /*
+         * Update the history with the last move.
+         */
+        var currentHistory = history;
+        var actions = [step];
 
+        var followLevel = TreeNavigator.checkAction(path, tree, currentPlayer, index, function (newPath, properties) {
 
-            /*
-             * Update the history with the last move.
-             */
-            var currentHistory = history;
-            var actions = [step];
+            if (properties.wrong !== undefined) {
+                isWrong = true;
+                step.wrong = true;
+            }
 
-
-            if (action === undefined) {
-                /*
-                 * Switch to variation mode
-                 */
+            if (TreeNavigator.getCurrentAction(newPath, tree) === undefined) {
+                completed = true;
+                completedLevel(isWrong);
             } else {
-                if (TreeNavigator.getCurrentAction(action, tree) === undefined) {
-                    console.log("Level completed!");
-                    completed = true;
-                    return;
-                } else {
+                /* Play the openent move. */
+                path = newPath;
+                TreeNavigator.playComputer(newPath, tree, currentPlayer, function(x, newPath) {
+                    var oponentAction = Actions.addPiece(x, goban, !currentPlayer, true, false, false)
+                    oponentAction.path = path;
+                    path = newPath;
+                    actions.push(oponentAction);
+                });
+                if (TreeNavigator.getCurrentAction(path, tree) === undefined) {
                     /*
-                     * Play the openent move.
+                     * Level has been completed by the computer move.
                      */
-
-                    TreeNavigator.play(action, tree, currentPlayer, function(x, newPath) {
-                        console.log(x);
-                        var oponentAction = Actions.addPiece(x, goban, !currentPlayer, true, false, false)
-                        oponentAction.path = path;
-                        path = newPath;
-                        actions.push(oponentAction);
-                    });
-
+                    completed = true;
+                    currentPlayer = !currentPlayer;
+                    completedLevel(isWrong);
                 }
 
             }
-            currentHistory.push(actions);
-            history = currentHistory;
+        });
 
+        if (!followLevel || completed) {
+            path = undefined;
+            currentPlayer = !currentPlayer;
         }
+
+        currentHistory.push(actions);
+        history = currentHistory;
 
     }
 

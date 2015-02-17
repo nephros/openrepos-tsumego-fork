@@ -2,18 +2,17 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 
-import io.thp.pyotherside 1.2
+import io.thp.pyotherside 1.3
 
-Page {
-
-    width: Screen.width; height: Screen.height;
-
+Item {
 
     anchors.fill: parent
 
+    id : board;
+
     Column {
 
-        id : column
+        id : column;
         anchors.fill: parent;
         spacing: 25
 
@@ -46,6 +45,10 @@ Page {
             id:goban
             width: parent.width;
             height: column.height - (row.height + view.height);
+            onCompletedLevel: {
+                overlay.text = status ? "X" : "✓";
+                overlay.color = status ? "red" : "green" ;
+            }
         }
 
         SlideshowView {
@@ -53,23 +56,41 @@ Page {
             width: parent.width
             height: 200
             itemWidth: width / 2
-            onCurrentIndexChanged: {py.call('board.getGame', [view.currentIndex], goban.setGoban)}
+            onCurrentIndexChanged: {
+                py.call('board.getGame', [view.currentIndex], goban.setGoban)
+            }
 
             model: 1
             delegate: Text {
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter;
+                verticalAlignment: Text.AlignVCenter;
 
-                color: Theme.primaryColor
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSizeMedium
+                color: Theme.primaryColor;
+                font.family: Theme.fontFamily;
+                font.pixelSize: Theme.fontSizeMedium;
 
-                width: view.itemWidth
-                height: view.height
+                width: view.itemWidth;
+                height: view.height;
                 text: "Problem " + (index + 1);
 
             }
         }
+    }
+
+    Text {
+        id: overlay
+        opacity: goban.completed ? 1 : 0
+        anchors {
+            centerIn:parent
+        }
+        font.family: Theme.fontFamily;
+        font.pixelSize: goban.height;
+
+        Behavior on opacity { NumberAnimation { duration: 500 } }
+    }
+
+    function loadBoard(path) {
+        py.loadBoard(path);
     }
 
     Python {
@@ -82,7 +103,7 @@ Page {
             importModule('board', function() {
                 console.log('module loaded');
                 console.log('Python version: ' + pythonVersion());
-            })
+            });
 
             setHandler('log', function (content) {
                 console.log(content);
@@ -90,12 +111,23 @@ Page {
 
             call('board.setPath', [pythonpath]);
             call('board.loadBoard', ["easy.sgf"], function (result) {
-                console.log(result + " problems found in the file")
+                console.log(result + " problems found in the file");
                 view.model = result
                 call('board.getGame', [0], goban.setGoban);
             });
-
         }
+
+        function loadBoard(path) {
+            call('board.loadBoard', [path], function (result) {
+                console.log(result + " problems found in the file");
+                view.model = result
+                call('board.getGame', [0], goban.setGoban);
+            });
+        }
+    }
+
+    function showHint() {
+        goban.showHint();
     }
 
 }
