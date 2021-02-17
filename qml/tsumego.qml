@@ -34,7 +34,7 @@ import "pages/"
 
 ApplicationWindow
 {
-    initialPage: Page {
+    initialPage: Component {
         SilicaFlickable {
 
             anchors.fill: parent
