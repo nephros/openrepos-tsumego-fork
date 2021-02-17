@@ -52,7 +52,7 @@ Page {
                 console.log(content);
             });
 
-            call('configuration.get_levels', [pythonpath, StandardPaths.documents], function(result) {
+            call('configuration.get_levels', [pythonpath + "/../content", StandardPaths.documents + "/tsumego"], function(result) {
                 result.forEach(function(elem) {
                     console.log(elem);
                     levelsList.append(elem);
