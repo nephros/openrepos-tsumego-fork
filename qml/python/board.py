@@ -25,7 +25,9 @@ def loadBoard(filename):
 
     if os.path.isfile(filename):
         sgfPath = filename
+        print( 'File %s is a file' , filename)
     else:
+        print( 'File %s is not a file' , filename)
         sgfPath = os.path.join(path,"../content","sgf",filename);
     pyotherside.send('log', sgfPath)
     try:

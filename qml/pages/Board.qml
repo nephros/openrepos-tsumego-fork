@@ -57,24 +57,28 @@ Item {
             id: view
             width: parent.width
             height: 200
-            itemWidth: width / 2
+            //height: Theme.itemSizeMedium
+            itemWidth: width - Theme.horizontalPageMargin
             onCurrentIndexChanged: {
                 py.call('board.getGame', [view.currentIndex], goban.setGoban)
             }
 
             model: 1
-            delegate: Text {
-                horizontalAlignment: Text.AlignHCenter;
-                verticalAlignment: Text.AlignVCenter;
-
-                color: Theme.primaryColor;
-                font.family: Theme.fontFamily;
-                font.pixelSize: Theme.fontSizeMedium;
-
+            delegate: SilicaItem {
                 width: view.itemWidth;
                 height: view.height;
-                text: "Problem " + (index + 1);
+                IconButton { id: leftbutton; anchors.left: parent.left; icon.source: "image://theme/icon-m-left";}
+                Text {
+                  anchors.centerIn: parent
+                  color: Theme.primaryColor;
+                  font.family: Theme.fontFamily;
+                  font.pixelSize: Theme.fontSizeMedium;
 
+                  width: parent.width - leftbutton.width * 2
+                  height: parent.height;
+                  text: "Problem " + (index + 1);
+                }
+                IconButton { id: rightbutton; anchors.right: parent.right ; icon.source: "image://theme/icon-m-right";}
             }
         }
     }

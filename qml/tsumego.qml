@@ -30,11 +30,16 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import Sailfish.Pickers 1.0
 import "pages/"
 
 ApplicationWindow
 {
+    cover:  Qt.resolvedUrl("cover/CoverPage.qml")
     initialPage: Component {
+        Page {
+        id: page
+        property string selectedFile
         SilicaFlickable {
 
             anchors.fill: parent
@@ -47,11 +52,10 @@ ApplicationWindow
                 MenuItem {
                     text: qsTr("Load level")
                     onClicked: {
-                        var options = pageStack.push(Qt.resolvedUrl("pages/collections_list.qml"));
-                        options.openCollection.connect(function(path) {
-                            board.loadBoard(path);
-                        });
-                    }
+                        pageStack.push(filePickerPage)
+                        console.log( "selected file: " + page.selectedFile)
+                        board.loadBoard(page.selectedFile);
+                        }
                 }
                 MenuItem {
                     text: qsTr("Hint")
@@ -60,11 +64,23 @@ ApplicationWindow
                     }
                 }
             }
+            Component {
+                id: filePickerPage
+                FilePickerPage {
+                    title: "Select SGF File"
+                    nameFilters: [ '*.sgf' ]
+                    onSelectedContentPropertiesChanged: {
+                        page.selectedFile = selectedContentProperties.filePath
+                        console.log( "selected file: " + page.selectedFile)
+                    }
+                }
+            }
 
             Board {id:board}
 
         }
 
+    }
     }
 }
 
