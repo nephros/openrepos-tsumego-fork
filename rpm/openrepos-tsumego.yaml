@@ -1,0 +1,23 @@
+Name: openrepos-tsumego
+Summary: go problem game
+Version: 0.2
+Release: 1
+Group: Amusements/Games
+License: unknown
+URL: 
+SCM:
+Requires:
+    - python
+    - pyotherside-qml-plugin-python3-qt5
+    - sailfishsilica-qt5
+Obsoletes: 
+  - tsumego = 0.1-1
+Configure: none
+Builder: none
+NoIconCache: true
+Files:
+  - '%{_bindir}/tsumego'
+  - '%{_datadir}/applications/%{name}.desktop'
+  - '%{_datadir}/icons/hicolor/*/apps/%{name}.png'
+  - '%{_datadir}/%{name}/qml/*'
+  - '%{_datadir}/%{name}/translations/*.qm'

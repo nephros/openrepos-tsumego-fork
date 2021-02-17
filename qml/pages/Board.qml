@@ -56,29 +56,41 @@ Item {
         SlideshowView {
             id: view
             width: parent.width
-            height: 200
-            //height: Theme.itemSizeMedium
-            itemWidth: width - Theme.horizontalPageMargin
+            //height: 200
+            height: Theme.itemSizeLarge
+            //height: Theme.iconSizeMedium
+            //itemWidth: width - Theme.horizontalPageMargin
+            itemWidth: width
             onCurrentIndexChanged: {
                 py.call('board.getGame', [view.currentIndex], goban.setGoban)
             }
 
             model: 1
-            delegate: SilicaItem {
+            delegate: Text {
+                id: problem
+                Icon {
+                  id: leftbutton;
+                  anchors.left: parent.left;
+                  anchors.verticalCenter: parent.verticalCenter;
+                  source: "image://theme/icon-m-enter-accept"
+                  rotation: 180
+                }
+                horizontalAlignment: Text.AlignHCenter;
+                verticalAlignment: Text.AlignVCenter;
+
+                color: Theme.primaryColor;
+                font.family: Theme.fontFamily;
+                font.pixelSize: Theme.fontSizeMedium;
+
                 width: view.itemWidth;
                 height: view.height;
-                IconButton { id: leftbutton; anchors.left: parent.left; icon.source: "image://theme/icon-m-left";}
-                Text {
-                  anchors.centerIn: parent
-                  color: Theme.primaryColor;
-                  font.family: Theme.fontFamily;
-                  font.pixelSize: Theme.fontSizeMedium;
-
-                  width: parent.width - leftbutton.width * 2
-                  height: parent.height;
-                  text: "Problem " + (index + 1);
+                text: "Problem " + (index + 1) + " of " + ( view.count );
+                Icon {
+                  id: rightbutton
+                  anchors.right: parent.right
+                  anchors.verticalCenter: parent.verticalCenter;
+                  source: "image://theme/icon-m-enter-accept"
                 }
-                IconButton { id: rightbutton; anchors.right: parent.right ; icon.source: "image://theme/icon-m-right";}
             }
         }
     }

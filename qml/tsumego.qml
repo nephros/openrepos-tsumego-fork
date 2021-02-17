@@ -40,6 +40,8 @@ ApplicationWindow
         Page {
         id: page
         property string selectedFile
+        property string selectedFileName
+
         SilicaFlickable {
 
             anchors.fill: parent
@@ -54,7 +56,6 @@ ApplicationWindow
                     onClicked: {
                         pageStack.push(filePickerPage)
                         console.log( "selected file: " + page.selectedFile)
-                        board.loadBoard(page.selectedFile);
                         }
                 }
                 MenuItem {
@@ -71,7 +72,9 @@ ApplicationWindow
                     nameFilters: [ '*.sgf' ]
                     onSelectedContentPropertiesChanged: {
                         page.selectedFile = selectedContentProperties.filePath
+                        page.selectedFileName = selectedContentProperties.fileName
                         console.log( "selected file: " + page.selectedFile)
+                        board.loadBoard(page.selectedFile);
                     }
                 }
             }
