@@ -16,26 +16,31 @@ Item {
         id: buttons
         width: parent.width;
         height: Theme.itemSizeMedium
-        spacing: Theme.paddingMedium
+        spacing: Theme.paddingLarge
         anchors.horizontalCenter: parent.horizontalCenter
 
         IconButton {
            width: parent.width / 3
+           anchors.verticalCenter: parent.verticalCenter
            icon.source: "image://theme/icon-m-back"
            onClicked: goban.undo();
         }
 
         IconButton {
+           id: bwbutton
            width: parent.width / 3
-           icon.source: "image://theme/icon-s-clear-opaque-background?" + (goban.currentPlayer ? "white":"black")
-           //icon.source.fillMode: Image.PreserveAspectFit
-           //source: "../content/gfx/" + (goban.currentPlayer ? "white":"black") + ".png"
-           //scale: 0.5
+           anchors.verticalCenter: parent.verticalCenter
+           icon.fillMode: Image.PreserveAspectFit
+           icon.source: "image://theme/icon-s-clear-opaque-background?" + (goban.currentPlayer ? "#ffffff":"#000000")
+           icon.anchors.centerIn: bwbutton
+           //icon.source: "../content/gfx/" + (goban.currentPlayer ? "white":"black") + ".png"
+           scale: 1.3
            onClicked: goban.showHint();
         }
 
         IconButton {
            width: parent.width / 3
+           anchors.verticalCenter: parent.verticalCenter
            icon.source: "image://theme/icon-m-refresh"
            onClicked: goban.start()
         }
@@ -60,8 +65,6 @@ Item {
             //height: column.height - (buttons.height + view.height) - (sep.height * 2) - Theme.paddingLarge
             height: column.height
             onCompletedLevel: {
-                //overlay.text = status ? "X" : "✓";
-                //overlay.color = status ? "red" : "green" ;
                 overlay.source = status ? "image://theme/icon-s-decline?red" : "image://theme/icon-s-checkmark?green"
             }
         }
@@ -130,7 +133,7 @@ Item {
             centerIn:parent
         }
         fillMode: Image.PreserveAspectFit
-        scale: 5
+        scale: 8
         Behavior on opacity { NumberAnimation { duration: 500 } }
     }
 
