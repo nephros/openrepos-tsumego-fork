@@ -1,3 +1,6 @@
+* Thu Feb 18 2021 Nephros <sailfish@nephros.org> 0.2.3
+- add GeminiPDA orientation fixes
+
 * Thu Feb 18 2021 Nephros <sailfish@nephros.org> 0.2.2
 - fix centering of Goban board
 - add minimal configuration page

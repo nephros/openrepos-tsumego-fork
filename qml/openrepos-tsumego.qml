@@ -43,12 +43,18 @@ ApplicationWindow
         property string gameFileName: "easy.sgf"
         property int problemIdx: 0
     }
+    ConfigurationValue {
+        id: devicemodel
+        key: "/desktop/lipstick-jolla-home/model"
+    }
+
+    allowedOrientations: (devicemodel === 'planetgemini') ?  Orientation.LandscapeInverted : defaultAllowedOrientations
 
     cover:  Qt.resolvedUrl("cover/CoverPage.qml")
     initialPage: Component {
         Page {
         id: page
-
+        allowedOrientations: (devicemodel === 'planetgemini') ?  Orientation.LandscapeInverted : defaultAllowedOrientations
         SilicaFlickable {
 
             anchors.fill: parent

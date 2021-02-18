@@ -15,7 +15,7 @@ Item {
     Row {
         id: buttons
         width: parent.width;
-        height: Theme.itemSizeMedium
+        height: page.isLandscape ? Theme.itemSizeMedium : Theme.itemSizeExtraSmall
         spacing: Theme.paddingLarge
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -84,7 +84,7 @@ Item {
         width: parent.width
         anchors.bottom: parent.bottom
         //height: 200
-        height: Theme.itemSizeMedium
+        height: page.isLandscape ? Theme.itemSizeMedium : Theme.itemSizeExtraSmall
         itemWidth: width - Theme.horizontalPageMargin
         //itemWidth: width
         //Component.onCompleted: {

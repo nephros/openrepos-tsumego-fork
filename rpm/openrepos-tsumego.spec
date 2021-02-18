@@ -9,7 +9,7 @@ Name:       openrepos-tsumego
 # << macros
 
 Summary:    go problem game
-Version:    0.2.2
+Version:    0.2.3
 Release:    1
 Group:      Amusements/Games
 License:    unknown
