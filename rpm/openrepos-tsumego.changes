@@ -1,0 +1,10 @@
+* Thu Feb 18 2021 Nephros <sailfish@nephros.org> 0.2.2
+- fix centering of Goban board
+- add minimal configuration page
+
+* Thu Feb 18 2021 Nephros <sailfish@nephros.org> 0.2.1
+- renamed app name to openrepos-tsumego
+- added proper possibility to load SGF files through Sailfish Picker dialog
+- revamped UI a little and removed some nonfunctional features
+- app now remembers loaded SGF files and loads them again at start
+

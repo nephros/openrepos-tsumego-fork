@@ -61,6 +61,7 @@ Item {
 
         Goban {
             id: goban
+            anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width - Theme.horizontalPageMargin
             //height: column.height - (buttons.height + view.height) - (sep.height * 2) - Theme.paddingLarge
             height: column.height

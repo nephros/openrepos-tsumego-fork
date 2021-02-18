@@ -56,7 +56,7 @@ ApplicationWindow
             PullDownMenu {
                 MenuItem {
                     text: qsTr("Options")
-                    onClicked: { Qt.resolvedUrl("Configuration.qml") }
+                    onClicked: { pageStack.push(Qt.resolvedUrl("pages/Configuration.qml") )}
                 }
                 MenuItem {
                     text: qsTr("Load Problem File")
