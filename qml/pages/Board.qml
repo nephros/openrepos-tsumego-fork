@@ -106,6 +106,7 @@ Item {
               source: "image://theme/icon-m-enter-accept"
               rotation: 180
               opacity: ( view.currentIndex === 0 ) ? 0.2 : 0.8
+              visible: ( view.count > 1 )
             }
             horizontalAlignment: Text.AlignHCenter;
             verticalAlignment: Text.AlignVCenter;
@@ -122,9 +123,40 @@ Item {
               anchors.right: parent.right
               anchors.verticalCenter: parent.verticalCenter;
               source: "image://theme/icon-m-enter-accept"
-              opacity: ( view.currentIndex === view.count ) ? 0.2 : 0.8
+              opacity: ( ( view.currentIndex + 1 ) === view.count ) ? 0.2 : 0.8
+              visible: ( view.count > 1 )
             }
         }
+    }
+    Slider {
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.verticalCenter: view.top
+      //anchors.verticalCenter: parent.bottom
+      width: parent.width
+      maximumValue: view.count
+      minimumValue: 1
+      stepSize: 1.0
+      enabled: false
+      highlighted: false
+      value: view.currentIndex
+      visible: ( view.count > 1 )
+    }
+    PushUpMenu {
+      visible: ( view.count > 1 )
+      MenuItem {
+        text: qsTr("Go to Problem...")
+        onClicked: {
+          var dialog = pageStack.push ( numberPicker );
+        }
+      }
+    }
+    Dialog {
+      id: numberPicker
+      TextField {
+        label: "foo"
+        width: parent.width
+        placeholderText: view.currentIndex
+      }
     }
 
     Image {
