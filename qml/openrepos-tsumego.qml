@@ -31,18 +31,18 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Sailfish.Pickers 1.0
-import Sailfish.Configuration 1.0
+import Nemo.Configuration 1.0
 import "pages/"
 
 ApplicationWindow
 {
-	ConfigurationGroup {
-	id: conf
-	path: "/org/nephros/openrepos-tsumego"
-	property.string gameFile: easy.sgf
-	property.string gameFileName: easy.sgf
-	property int problem
-	}
+    ConfigurationGroup {
+        id: conf
+        path: "/org/nephros/openrepos-tsumego"
+        property string gameFile: "easy.sgf"
+        property string gameFileName: "easy.sgf"
+        property int problemIdx: 1
+    }
 
     cover:  Qt.resolvedUrl("cover/CoverPage.qml")
     initialPage: Component {
@@ -56,7 +56,7 @@ ApplicationWindow
             PullDownMenu {
                 MenuItem {
                     text: qsTr("Options")
-                    onClicked: {}
+                    onClicked: { Qt.resolvedUrl("Configuration.qml") }
                 }
                 MenuItem {
                     text: qsTr("Load level")
@@ -65,12 +65,13 @@ ApplicationWindow
                         console.log( "selected file: " + conf.selectedFile)
                         }
                 }
-                MenuItem {
-                    text: qsTr("Hint")
-                    onClicked: {
-                        board.showHint();
-                    }
-                }
+                //MenuItem {
+                //    text: qsTr("Hint")
+                //    visible: !board.goban.completed
+                //    onClicked: {
+                //        board.showHint();
+                //    }
+                //}
             }
             Component {
                 id: filePickerPage

@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import Nemo.Configuration 1.0
 
 import io.thp.pyotherside 1.3
 
@@ -11,57 +12,84 @@ Item {
 
     id : board;
 
+    Row {
+        id: buttons
+        width: parent.width;
+        height: Theme.itemSizeMedium
+        spacing: Theme.paddingMedium
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        IconButton {
+           width: parent.width / 3
+           icon.source: "image://theme/icon-m-back"
+           onClicked: goban.undo();
+        }
+
+        IconButton {
+           width: parent.width / 3
+           icon.source: "image://theme/icon-s-clear-opaque-background?" + (goban.currentPlayer ? "white":"black")
+           //icon.source.fillMode: Image.PreserveAspectFit
+           //source: "../content/gfx/" + (goban.currentPlayer ? "white":"black") + ".png"
+           //scale: 0.5
+           onClicked: goban.showHint();
+        }
+
+        IconButton {
+           width: parent.width / 3
+           icon.source: "image://theme/icon-m-refresh"
+           onClicked: goban.start()
+        }
+    }
+    Separator {
+         horizontalAlignment: Qt.AlignHCenter
+         width: parent.width - Theme.horizontalPageMargin
+         color: Theme.secondaryHighlightColor
+         anchors.top: buttons.bottom
+     }
+
     Column {
 
         id : column;
-        anchors.fill: parent;
-        spacing: 25
-
-        Row {
-
-            id: row
-            width: parent.width;
-
-            IconButton {
-               width: (parent.width - parent.height) / 2;
-               icon.source: "image://theme/icon-m-back"
-               onClicked: goban.undo();
-            }
-
-            Image {
-               width: parent.height;
-               source: "../content/gfx/" + (goban.currentPlayer ? "white":"black") + ".png"
-               height: parent.height;
-               scale: 0.5
-            }
-
-            IconButton {
-               width: (parent.width - parent.height) / 2;
-               icon.source: "image://theme/icon-m-refresh"
-               onClicked: goban.start()
-            }
-        }
+        anchors.centerIn: parent
+        width: parent.width
+        height: parent.height - buttons.height - view.height
 
         Goban {
-            id:goban
-            width: parent.width;
-            height: column.height - (row.height + view.height);
+            id: goban
+            width: parent.width - Theme.horizontalPageMargin
+            //height: column.height - (buttons.height + view.height) - (sep.height * 2) - Theme.paddingLarge
+            height: column.height
             onCompletedLevel: {
-                overlay.text = status ? "X" : "✓";
-                overlay.color = status ? "red" : "green" ;
+                //overlay.text = status ? "X" : "✓";
+                //overlay.color = status ? "red" : "green" ;
+                overlay.source = status ? "image://theme/icon-s-decline?red" : "image://theme/icon-s-checkmark?green"
             }
+        }
+    }
+
+        Separator {
+            id: sep
+            horizontalAlignment: Qt.AlignHCenter
+            width: parent.width - Theme.horizontalPageMargin
+            color: Theme.secondaryHighlightColor
+            anchors.bottom: view.top
         }
 
         SlideshowView {
             id: view
             width: parent.width
+            anchors.bottom: parent.bottom
             //height: 200
-            height: Theme.itemSizeLarge
-            //height: Theme.iconSizeMedium
-            //itemWidth: width - Theme.horizontalPageMargin
-            itemWidth: width
+            height: Theme.itemSizeMedium
+            itemWidth: width - Theme.horizontalPageMargin
+            //itemWidth: width
+            Component.onCompleted: {
+              if ( conf.problemIdx !== 1 )
+                py.call('board.getGame', [conf.problemIdx], goban.setGoban)
+            }
             onCurrentIndexChanged: {
-                py.call('board.getGame', [view.currentIndex], goban.setGoban)
+                conf.problemIdx = currentIndex ; conf.sync();
+                py.call('board.getGame', [currentIndex], goban.setGoban)
             }
 
             model: 1
@@ -73,7 +101,7 @@ Item {
                   anchors.verticalCenter: parent.verticalCenter;
                   source: "image://theme/icon-m-enter-accept"
                   rotation: 180
-                  opacity: ( index === 1 ) ? 0 : 0.8
+                  opacity: ( view.currentIndex === 0 ) ? 0.2 : 0.8
                 }
                 horizontalAlignment: Text.AlignHCenter;
                 verticalAlignment: Text.AlignVCenter;
@@ -90,21 +118,19 @@ Item {
                   anchors.right: parent.right
                   anchors.verticalCenter: parent.verticalCenter;
                   source: "image://theme/icon-m-enter-accept"
-                  opacity: ( index === view.count ) ? 0 : 0.8
+                  opacity: ( view.currentIndex === view.count ) ? 0.2 : 0.8
                 }
             }
         }
-    }
 
-    Text {
+    Image {
         id: overlay
         opacity: goban.completed ? 1 : 0
         anchors {
             centerIn:parent
         }
-        font.family: Theme.fontFamily;
-        font.pixelSize: goban.height;
-
+        fillMode: Image.PreserveAspectFit
+        scale: 5
         Behavior on opacity { NumberAnimation { duration: 500 } }
     }
 

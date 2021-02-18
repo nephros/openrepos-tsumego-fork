@@ -42,10 +42,9 @@ rm -rf %{buildroot}
 # >> install pre
 install -D -p -m 755 %{name} %{buildroot}/%{_bindir}/%{name}
 install -D -p -m 644 %{name}.desktop %{buildroot}/%{_datadir}/applications/%{name}.desktop
-mkdir -p %{buildroot}/%{_datadir}/%{name}/
-cp -r qml %{buildroot}/%{_datadir}/%{name}/
-mkdir -p %{buildroot}/%{_datadir}/%{name}/translations/
-cp -r translations/* %{buildroot}/%{_datadir}/%{name}/translations/
+for f in $(find qml translations -type f | grep -v \\.swp); do
+install -D -p -m 644 ${f} %{buildroot}/%{_datadir}/%{name}/${f}
+done
 mkdir -p %{buildroot}/%{_datadir}/icons/hicolor/86x86/apps/
 cp -r %{name}.png %{buildroot}/%{_datadir}/icons/hicolor/86x86/apps/%{name}.png
 # << install pre
