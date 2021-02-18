@@ -41,7 +41,7 @@ ApplicationWindow
         path: "/org/nephros/openrepos-tsumego"
         property string gameFile: "easy.sgf"
         property string gameFileName: "easy.sgf"
-        property int problemIdx: 1
+        property int problemIdx: 0
     }
 
     cover:  Qt.resolvedUrl("cover/CoverPage.qml")
@@ -59,7 +59,7 @@ ApplicationWindow
                     onClicked: { Qt.resolvedUrl("Configuration.qml") }
                 }
                 MenuItem {
-                    text: qsTr("Load level")
+                    text: qsTr("Load Problem File")
                     onClicked: {
                         pageStack.push(filePickerPage)
                         console.log( "selected file: " + conf.selectedFile)
@@ -81,6 +81,7 @@ ApplicationWindow
                     onSelectedContentPropertiesChanged: {
                         conf.gameFile = selectedContentProperties.filePath
                         conf.gameFileName = selectedContentProperties.fileName
+                        conf.problemIdx = 0
                         console.log( "selected file: " + conf.selectedFile)
                         board.loadBoard(conf.gameFile);
                     }

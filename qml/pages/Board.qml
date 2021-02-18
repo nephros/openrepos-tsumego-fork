@@ -70,61 +70,61 @@ Item {
         }
     }
 
-        Separator {
-            id: sep
-            horizontalAlignment: Qt.AlignHCenter
-            width: parent.width - Theme.horizontalPageMargin
-            color: Theme.secondaryHighlightColor
-            anchors.bottom: view.top
+    Separator {
+        id: sep
+        horizontalAlignment: Qt.AlignHCenter
+        width: parent.width - Theme.horizontalPageMargin
+        color: Theme.secondaryHighlightColor
+        anchors.bottom: view.top
+    }
+
+    SlideshowView {
+        id: view
+        width: parent.width
+        anchors.bottom: parent.bottom
+        //height: 200
+        height: Theme.itemSizeMedium
+        itemWidth: width - Theme.horizontalPageMargin
+        //itemWidth: width
+        //Component.onCompleted: {
+        //  if ( conf.problemIdx !== 0 )
+        //    py.call('board.getGame', [conf.problemIdx], goban.setGoban)
+        //}
+        onCurrentIndexChanged: {
+            conf.problemIdx = currentIndex ; conf.sync();
+            py.call('board.getGame', [currentIndex], goban.setGoban)
         }
 
-        SlideshowView {
-            id: view
-            width: parent.width
-            anchors.bottom: parent.bottom
-            //height: 200
-            height: Theme.itemSizeMedium
-            itemWidth: width - Theme.horizontalPageMargin
-            //itemWidth: width
-            Component.onCompleted: {
-              if ( conf.problemIdx !== 1 )
-                py.call('board.getGame', [conf.problemIdx], goban.setGoban)
+        model: 1
+        delegate: Text {
+            id: problem
+            Icon {
+              id: leftbutton;
+              anchors.left: parent.left;
+              anchors.verticalCenter: parent.verticalCenter;
+              source: "image://theme/icon-m-enter-accept"
+              rotation: 180
+              opacity: ( view.currentIndex === 0 ) ? 0.2 : 0.8
             }
-            onCurrentIndexChanged: {
-                conf.problemIdx = currentIndex ; conf.sync();
-                py.call('board.getGame', [currentIndex], goban.setGoban)
-            }
+            horizontalAlignment: Text.AlignHCenter;
+            verticalAlignment: Text.AlignVCenter;
 
-            model: 1
-            delegate: Text {
-                id: problem
-                Icon {
-                  id: leftbutton;
-                  anchors.left: parent.left;
-                  anchors.verticalCenter: parent.verticalCenter;
-                  source: "image://theme/icon-m-enter-accept"
-                  rotation: 180
-                  opacity: ( view.currentIndex === 0 ) ? 0.2 : 0.8
-                }
-                horizontalAlignment: Text.AlignHCenter;
-                verticalAlignment: Text.AlignVCenter;
+            color: Theme.primaryColor;
+            font.family: Theme.fontFamily;
+            font.pixelSize: Theme.fontSizeMedium;
 
-                color: Theme.primaryColor;
-                font.family: Theme.fontFamily;
-                font.pixelSize: Theme.fontSizeMedium;
-
-                width: view.itemWidth;
-                height: view.height;
-                text: "Problem " + (index + 1) + " of " + ( view.count );
-                Icon {
-                  id: rightbutton
-                  anchors.right: parent.right
-                  anchors.verticalCenter: parent.verticalCenter;
-                  source: "image://theme/icon-m-enter-accept"
-                  opacity: ( view.currentIndex === view.count ) ? 0.2 : 0.8
-                }
+            width: view.itemWidth;
+            height: view.height;
+            text: "Problem " + (index + 1) + " of " + ( view.count );
+            Icon {
+              id: rightbutton
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter;
+              source: "image://theme/icon-m-enter-accept"
+              opacity: ( view.currentIndex === view.count ) ? 0.2 : 0.8
             }
         }
+    }
 
     Image {
         id: overlay
@@ -157,19 +157,45 @@ Item {
                 console.log(content);
             });
 
-            call('board.setPath', [pythonpath]);
-            call('board.loadBoard', ["easy.sgf"], function (result) {
-                console.log(result + " problems found in the file");
-                view.model = result
-                call('board.getGame', [0], goban.setGoban);
-            });
+            if (conf.gameFileName === "easy.sgf") {
+                call('board.setPath', [pythonpath]);
+                call('board.loadBoard', ["easy.sgf"], function (result) {
+                    console.log(result + " problems found in the file");
+                    view.model = result
+                    if ( conf.problemIdx ) {
+                        console.log("loading problem no " + conf.problemIdx );
+                        call('board.getGame', [conf.problemIdx], goban.setGoban);
+                    } else {
+                        console.log("loading first problem: " + conf.problemIdx );
+                        call('board.getGame', [0], goban.setGoban);
+                    }
+                });
+            } else {
+                call('board.loadBoard', [conf.gameFile], function (result) {
+                    console.log(result + " problems found in the file");
+                    view.model = result
+                    if ( conf.problemIdx ) {
+                        console.log("loading problem no " + conf.problemIdx );
+                        call('board.getGame', [conf.problemIdx], goban.setGoban);
+                    } else {
+                        console.log("loading first problem: " + conf.problemIdx );
+                        call('board.getGame', [0], goban.setGoban);
+                    }
+                });
+            }
         }
 
         function loadBoard(path) {
             call('board.loadBoard', [path], function (result) {
                 console.log(result + " problems found in the file");
                 view.model = result
-                call('board.getGame', [0], goban.setGoban);
+                if ( conf.problemIdx ) {
+                    console.log("loading problem no " + conf.problemIdx );
+                    call('board.getGame', [conf.problemIdx], goban.setGoban);
+                } else {
+                    console.log("loading first problem: " + conf.problemIdx );
+                    call('board.getGame', [0], goban.setGoban);
+                }
             });
         }
     }
