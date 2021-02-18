@@ -1,4 +1,3 @@
-
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 
@@ -74,6 +73,7 @@ Item {
                   anchors.verticalCenter: parent.verticalCenter;
                   source: "image://theme/icon-m-enter-accept"
                   rotation: 180
+                  opacity: ( index === 1 ) ? 0 : 0.8
                 }
                 horizontalAlignment: Text.AlignHCenter;
                 verticalAlignment: Text.AlignVCenter;
@@ -90,6 +90,7 @@ Item {
                   anchors.right: parent.right
                   anchors.verticalCenter: parent.verticalCenter;
                   source: "image://theme/icon-m-enter-accept"
+                  opacity: ( index === view.count ) ? 0 : 0.8
                 }
             }
         }

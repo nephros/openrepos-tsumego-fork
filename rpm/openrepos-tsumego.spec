@@ -9,10 +9,11 @@ Name:       openrepos-tsumego
 # << macros
 
 Summary:    go problem game
-Version:    0.2
+Version:    0.2.1
 Release:    1
 Group:      Amusements/Games
 License:    unknown
+URL:        http://openrepos.net/nephros/openrepos-tsumego
 Source100:  openrepos-tsumego.yaml
 Requires:   python
 Requires:   pyotherside-qml-plugin-python3-qt5
@@ -39,7 +40,7 @@ Obsoletes:   tsumego = 0.1-1
 %install
 rm -rf %{buildroot}
 # >> install pre
-install -D -p -m 755 tsumego %{buildroot}/%{_bindir}/tsumego
+install -D -p -m 755 %{name} %{buildroot}/%{_bindir}/%{name}
 install -D -p -m 644 %{name}.desktop %{buildroot}/%{_datadir}/applications/%{name}.desktop
 mkdir -p %{buildroot}/%{_datadir}/%{name}/
 cp -r qml %{buildroot}/%{_datadir}/%{name}/
@@ -58,7 +59,7 @@ desktop-file-install --delete-original       \
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/tsumego
+%{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 %{_datadir}/%{name}/qml/*

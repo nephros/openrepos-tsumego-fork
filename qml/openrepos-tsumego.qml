@@ -31,16 +31,23 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Sailfish.Pickers 1.0
+import Sailfish.Configuration 1.0
 import "pages/"
 
 ApplicationWindow
 {
+	ConfigurationGroup {
+	id: conf
+	path: "/org/nephros/openrepos-tsumego"
+	property.string gameFile: easy.sgf
+	property.string gameFileName: easy.sgf
+	property int problem
+	}
+
     cover:  Qt.resolvedUrl("cover/CoverPage.qml")
     initialPage: Component {
         Page {
         id: page
-        property string selectedFile
-        property string selectedFileName
 
         SilicaFlickable {
 
@@ -55,7 +62,7 @@ ApplicationWindow
                     text: qsTr("Load level")
                     onClicked: {
                         pageStack.push(filePickerPage)
-                        console.log( "selected file: " + page.selectedFile)
+                        console.log( "selected file: " + conf.selectedFile)
                         }
                 }
                 MenuItem {
@@ -71,10 +78,10 @@ ApplicationWindow
                     title: "Select SGF File"
                     nameFilters: [ '*.sgf' ]
                     onSelectedContentPropertiesChanged: {
-                        page.selectedFile = selectedContentProperties.filePath
-                        page.selectedFileName = selectedContentProperties.fileName
-                        console.log( "selected file: " + page.selectedFile)
-                        board.loadBoard(page.selectedFile);
+                        conf.gameFile = selectedContentProperties.filePath
+                        conf.gameFileName = selectedContentProperties.fileName
+                        console.log( "selected file: " + conf.selectedFile)
+                        board.loadBoard(conf.gameFile);
                     }
                 }
             }

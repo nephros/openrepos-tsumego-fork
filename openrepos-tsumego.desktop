@@ -1,11 +1,6 @@
 [Desktop Entry]
 Type=Application
 X-Nemo-Application-Type=silica-qt5
-Icon=tsumego
-Exec=tsumego
-Name=tsumego
-# translation example:
-# your app name in French locale (fr)
-Name[fr]=tsumego
-
-X-Desktop-File-Install-Version=0.20
+Icon=openrepos-tsumego
+Exec=openrepos-tsumego
+Name=Tsumego

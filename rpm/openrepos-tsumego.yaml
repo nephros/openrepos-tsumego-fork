@@ -1,11 +1,11 @@
 Name: openrepos-tsumego
 Summary: go problem game
-Version: 0.2
+Version: 0.2.1
 Release: 1
 Group: Amusements/Games
 License: unknown
-URL: 
-SCM:
+URL: http://openrepos.net/nephros/openrepos-tsumego
+#SCM:
 Requires:
     - python
     - pyotherside-qml-plugin-python3-qt5
@@ -16,7 +16,7 @@ Configure: none
 Builder: none
 NoIconCache: true
 Files:
-  - '%{_bindir}/tsumego'
+  - '%{_bindir}/%{name}'
   - '%{_datadir}/applications/%{name}.desktop'
   - '%{_datadir}/icons/hicolor/*/apps/%{name}.png'
   - '%{_datadir}/%{name}/qml/*'
