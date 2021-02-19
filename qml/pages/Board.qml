@@ -128,35 +128,68 @@ Item {
             }
         }
     }
-    Slider {
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.verticalCenter: view.top
-      //anchors.verticalCenter: parent.bottom
-      width: parent.width
-      maximumValue: view.count
-      minimumValue: 1
-      stepSize: 1.0
-      enabled: false
-      highlighted: false
-      value: view.currentIndex
-      visible: ( view.count > 1 )
-    }
+//    Slider {
+//      anchors.horizontalCenter: parent.horizontalCenter
+//      anchors.verticalCenter: view.top
+//      //anchors.verticalCenter: parent.bottom
+//      width: parent.width
+//      maximumValue: view.count
+//      minimumValue: 1
+//      stepSize: 1.0
+//      enabled: false
+//      highlighted: false
+//      value: view.currentIndex
+//      visible: ( view.count > 1 )
+//    }
     PushUpMenu {
       visible: ( view.count > 1 )
       MenuItem {
         text: qsTr("Go to Problem...")
         onClicked: {
-          var dialog = pageStack.push ( numberPicker );
+          var dialog = pageStack.push ( numberPicker, {"number": view.currentIndex});
+          dialog.accepted.connect(function() { view.currentIndex = dialog.number })
         }
       }
     }
-    Dialog {
+    Component {
       id: numberPicker
-      TextField {
-        label: "foo"
-        width: parent.width
-        placeholderText: view.currentIndex
-      }
+      Dialog {
+        property int number
+        Column {
+          width: parent.width
+            DialogHeader { 
+              id: header
+              title: qsTr("Select to Problem No. ...")
+              acceptText: qsTr("Go!")
+              cancelText: qsTr("Back")
+            }
+            TextField {
+              id: numberField
+              anchors.top: header.bottom
+              anchors.horizontalCenter: parent.horizontalCenter
+              label: "foo"
+              text: slider.value
+              width: Theme.buttonWidthMedium 
+              placeholderText: view.currentIndex
+              validator: IntValidator { bottom: 0; top: view.count }
+            }
+            Slider {
+              anchors.top: numberField.bottom
+              id: slider
+              anchors.horizontalCenter: parent.horizontalCenter
+              width: parent.width
+              maximumValue: view.count
+              minimumValue: 1
+              stepSize: 1.0
+              value: view.currentIndex
+            }
+        }
+        onDone: {
+            if (result == DialogResult.Accepted) {
+               number  = numberField.text
+        }
+    }
+    }
     }
 
     Image {
