@@ -161,7 +161,7 @@ Item {
               id: slider
               anchors.horizontalCenter: parent.horizontalCenter
               width: parent.width
-              maximumValue: view.count - 1
+              maximumValue: view.count
               minimumValue: 0
               stepSize: 1.0
               value: view.currentIndex
