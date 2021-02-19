@@ -146,20 +146,16 @@ Item {
           width: parent.width
             DialogHeader { 
               id: header
-              title: qsTr("Select to Problem No. ...")
+              title: qsTr("Select Problem No. ...")
               acceptText: qsTr("Go!")
               cancelText: qsTr("Back")
             }
-            TextField {
-              id: numberField
-              //anchors.top: header.bottom
-              anchors.horizontalCenter: parent.horizontalCenter
-              label: "#"
-              text: slider.value
-              width: Theme.buttonWidthMedium 
-              //placeholderText: view.currentIndex
-              validator: IntValidator { bottom: 0; top: view.count }
-            }
+            Separator {
+                 horizontalAlignment: Qt.AlignHCenter
+                 width: parent.width - Theme.horizontalPageMargin
+                 color: Theme.secondaryHighlightColor
+                 //anchors.top: header.bottom
+             }
             Slider {
               //anchors.top: numberField.bottom
               id: slider
@@ -169,11 +165,12 @@ Item {
               minimumValue: 0
               stepSize: 1.0
               value: view.currentIndex
+              valueText: value
             }
         }
         onDone: {
             if (result == DialogResult.Accepted) {
-               number  = (Number(numberField.text) - 1) // index 0
+               number  = (Number(slider.value) - 1) // index 0
         }
     }
     }
