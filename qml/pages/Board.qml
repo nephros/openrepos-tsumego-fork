@@ -128,19 +128,6 @@ Item {
             }
         }
     }
-//    Slider {
-//      anchors.horizontalCenter: parent.horizontalCenter
-//      anchors.verticalCenter: view.top
-//      //anchors.verticalCenter: parent.bottom
-//      width: parent.width
-//      maximumValue: view.count
-//      minimumValue: 1
-//      stepSize: 1.0
-//      enabled: false
-//      highlighted: false
-//      value: view.currentIndex
-//      visible: ( view.count > 1 )
-//    }
     PushUpMenu {
       visible: ( view.count > 1 )
       MenuItem {
@@ -167,7 +154,7 @@ Item {
               id: numberField
               anchors.top: header.bottom
               anchors.horizontalCenter: parent.horizontalCenter
-              label: "foo"
+              label: "#"
               text: slider.value
               width: Theme.buttonWidthMedium 
               placeholderText: view.currentIndex
@@ -179,14 +166,14 @@ Item {
               anchors.horizontalCenter: parent.horizontalCenter
               width: parent.width
               maximumValue: view.count
-              minimumValue: 1
+              minimumValue: 0
               stepSize: 1.0
               value: view.currentIndex
             }
         }
         onDone: {
             if (result == DialogResult.Accepted) {
-               number  = numberField.text
+               number  = (numberField.text + 1) // index 0
         }
     }
     }
