@@ -152,20 +152,20 @@ Item {
             }
             TextField {
               id: numberField
-              anchors.top: header.bottom
+              //anchors.top: header.bottom
               anchors.horizontalCenter: parent.horizontalCenter
               label: "#"
               text: slider.value
               width: Theme.buttonWidthMedium 
-              placeholderText: view.currentIndex
+              //placeholderText: view.currentIndex
               validator: IntValidator { bottom: 0; top: view.count }
             }
             Slider {
-              anchors.top: numberField.bottom
+              //anchors.top: numberField.bottom
               id: slider
               anchors.horizontalCenter: parent.horizontalCenter
               width: parent.width
-              maximumValue: view.count
+              maximumValue: view.count - 1
               minimumValue: 0
               stepSize: 1.0
               value: view.currentIndex
@@ -173,7 +173,7 @@ Item {
         }
         onDone: {
             if (result == DialogResult.Accepted) {
-               number  = (numberField.text + 1) // index 0
+               number  = (Number(numberField.text) - 1) // index 0
         }
     }
     }
