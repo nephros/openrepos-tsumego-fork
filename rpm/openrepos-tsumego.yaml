@@ -1,7 +1,8 @@
 Name: openrepos-tsumego
 Summary: go problem game
-Version: 0.2.4
-Release: 1
+Version: 0.3.1
+Release: 2
+BuildArch: noarch
 Group: Amusements/Games
 License: unknown
 URL: http://openrepos.net/nephros/openrepos-tsumego
@@ -10,13 +11,15 @@ Requires:
     - python
     - pyotherside-qml-plugin-python3-qt5
     - sailfishsilica-qt5
+    - libsailfishapp-launcher
 Obsoletes: 
   - tsumego = 0.1-1
+  - openrepos-tsumego <= 0.2
 Configure: none
 Builder: none
 NoIconCache: true
 Files:
-  - '%{_bindir}/%{name}'
+  # '%{_bindir}/%{name}'
   - '%{_datadir}/applications/%{name}.desktop'
   - '%{_datadir}/icons/hicolor/*/apps/%{name}.png'
   - '%{_datadir}/%{name}/qml/*'

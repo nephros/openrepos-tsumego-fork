@@ -1,3 +1,11 @@
+* Tue Oct 31 2021 Nephros <sailfish@nephros.org> 0.3.1
+- update deps
+
+* Tue Oct 26 2021 Nephros <sailfish@nephros.org> 0.3.1
+- add SailJail permissions to .desktop
+- build as -noarch package
+- remove binary executable (pure QML + python), thanks @poetaster, https://openrepos.net/comment/38984#comment-38984
+
 * Thu Feb 18 2021 Nephros <sailfish@nephros.org> 0.2.4
 - fix advancement arrows
 - add problem selector

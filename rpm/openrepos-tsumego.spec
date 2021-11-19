@@ -9,17 +9,20 @@ Name:       openrepos-tsumego
 # << macros
 
 Summary:    go problem game
-Version:    0.2.4
-Release:    1
+Version:    0.3.1
+Release:    2
 Group:      Amusements/Games
 License:    unknown
+BuildArch:  noarch
 URL:        http://openrepos.net/nephros/openrepos-tsumego
 Source100:  openrepos-tsumego.yaml
 Requires:   python
 Requires:   pyotherside-qml-plugin-python3-qt5
 Requires:   sailfishsilica-qt5
+Requires:   libsailfishapp-launcher
 BuildRequires:  desktop-file-utils
 Obsoletes:   tsumego = 0.1-1
+Obsoletes:   openrepos-tsumego <= 0.2
 
 %description
 %{summary}.
@@ -40,7 +43,7 @@ Obsoletes:   tsumego = 0.1-1
 %install
 rm -rf %{buildroot}
 # >> install pre
-install -D -p -m 755 %{name} %{buildroot}/%{_bindir}/%{name}
+#install -D -p -m 755 %%{name} %%{buildroot}/%%{_bindir}/%%{name}
 install -D -p -m 644 %{name}.desktop %{buildroot}/%{_datadir}/applications/%{name}.desktop
 for f in $(find qml translations -type f | grep -v \\.swp); do
 install -D -p -m 644 ${f} %{buildroot}/%{_datadir}/%{name}/${f}
@@ -58,7 +61,6 @@ desktop-file-install --delete-original       \
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 %{_datadir}/%{name}/qml/*

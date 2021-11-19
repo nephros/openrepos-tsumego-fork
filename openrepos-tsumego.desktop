@@ -2,5 +2,10 @@
 Type=Application
 X-Nemo-Application-Type=silica-qt5
 Icon=openrepos-tsumego
-Exec=openrepos-tsumego
+Exec=sailfish-qml openrepos-tsumego
 Name=Tsumego
+
+[X-Sailjail]
+Permissions=Documents;Downloads
+OrganizationName=org.nephros.sailfish
+ApplicationName=openrepos-tsumego
