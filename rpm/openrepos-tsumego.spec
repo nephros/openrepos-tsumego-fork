@@ -10,7 +10,7 @@ Name:       openrepos-tsumego
 
 Summary:    go problem game
 Version:    0.3.1
-Release:    2
+Release:    3
 Group:      Amusements/Games
 License:    unknown
 BuildArch:  noarch
@@ -22,6 +22,7 @@ Requires:   pyotherside-qml-plugin-python3-qt5
 Requires:   sailfishsilica-qt5
 Requires:   libsailfishapp-launcher
 BuildRequires:  desktop-file-utils
+Provides:   tsumego
 Obsoletes:   tsumego = 0.1-1
 Obsoletes:   openrepos-tsumego <= 0.2
 
