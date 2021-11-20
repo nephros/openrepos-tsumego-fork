@@ -2,11 +2,13 @@ Name: openrepos-tsumego
 Summary: go problem game
 Version: 0.3.1
 Release: 2
-BuildArch: noarch
 Group: Amusements/Games
+Sources:
+  - '%{name}-%{version}.tar.gz'
 License: unknown
 URL: http://openrepos.net/nephros/openrepos-tsumego
 #SCM:
+BuildArch: noarch
 Requires:
     - python
     - pyotherside-qml-plugin-python3-qt5

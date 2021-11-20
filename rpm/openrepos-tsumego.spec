@@ -15,6 +15,7 @@ Group:      Amusements/Games
 License:    unknown
 BuildArch:  noarch
 URL:        http://openrepos.net/nephros/openrepos-tsumego
+Source0:    %{name}-%{version}.tar.gz
 Source100:  openrepos-tsumego.yaml
 Requires:   python
 Requires:   pyotherside-qml-plugin-python3-qt5
@@ -28,6 +29,8 @@ Obsoletes:   openrepos-tsumego <= 0.2
 %{summary}.
 
 %prep
+%setup -q -n %{name}-%{version}
+
 # >> setup
 # << setup
 
